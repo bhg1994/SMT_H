@@ -70,8 +70,6 @@ public class ProfileActivity extends AppCompatActivity {
         profileactivity_textview_usermessage.setText(userinfo.getComment());
 
         for (int i=0; i<currentUser.getFriendsList().size();i++){
-            Log.d("12321",userinfo.get_id());
-            Log.d("12321",currentUser.getFriendsList().get(i).get_id());
             if(currentUser.getFriendsList().get(i).get_id().equals(userinfo.get_id())){
                 isFriend=true;
                 break;
@@ -85,8 +83,6 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        Log.d("12321",Boolean.toString(isFriend));
 
         if(isFriend)
             profileactivity_button_friendAdd.setText("친구 삭제");
@@ -105,8 +101,6 @@ public class ProfileActivity extends AppCompatActivity {
                 userInfoUpdate.Update(CurrentUserInfo.getUser().getUserInfo().get_id(),ProfileActivity.this);
             }
         });
-
-
     }
 
     public void AddFriend(String userId, String friendId){
@@ -129,7 +123,6 @@ public class ProfileActivity extends AppCompatActivity {
                             break;
                         case 1:
                             Log.d("test123","FAsucess");
-
                             break;
                     }
                 }

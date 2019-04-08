@@ -31,6 +31,7 @@ import com.example.dnjsr.smtalk.api.IdCheckApi;
 import com.example.dnjsr.smtalk.api.RetrofitApi;
 import com.example.dnjsr.smtalk.api.SearchApi;
 import com.example.dnjsr.smtalk.fragment.PeopleFragment;
+import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
 import com.example.dnjsr.smtalk.globalVariables.SelectedUserInfo;
 import com.example.dnjsr.smtalk.globalVariables.ServerURL;
 import com.example.dnjsr.smtalk.info.UserInfo;
@@ -89,7 +90,6 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 userInfos.clear();
-                //searchActivityRecyclerViewAdapter.items.clear();
                 String searchId = searchActivity_edittext_search.getText().toString();
                 if(searchId.length()<3){
                     Toast.makeText(SearchActivity.this, "3글자 이상 입력해 주세요", Toast.LENGTH_SHORT).show();
@@ -100,74 +100,9 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-        searchActivity_edittext_search.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                searchString = searchActivity_edittext_search.getText().toString();
-                /*if(searchString.length()>=3){
-                    userInfos.clear();
-                    Retrofit retrofit = new Retrofit.Builder().baseUrl(url)
-                            .addConverterFactory(GsonConverterFactory.create()).build();
-
-                    SearchApi searchApi = retrofit.create(SearchApi.class);
-                    searchApi.getUserId(searchString).enqueue(new Callback<SearchResult>() {
-                        @Override
-                        public void onResponse(Call<SearchResult> call, Response<SearchResult> response) {
-                            if (response.isSuccessful()) {
-                                SearchResult searchResult = response.body();
-                                switch (searchResult.getResult()) {
-                                    case 0:
-                                        Log.d("test123","fail");
-                                        break;
-                                    case 1:
-                                        Log.d("test123",Integer.toString(searchResult.getUsers().size()));
-                                        for (UserInfo userInfo : searchResult.getUsers()){
-
-                                            String profileurl = url+userInfo.getProfileImgUrl();
-
-                                            userInfo.setProfileImg(profileurl);
-                                            userInfos.add(userInfo);
-                                        }
-                                        searchActivityRecyclerViewAdapter.notifyDataSetChanged();
-                                        Log.d("test123",userInfos.get(0).getProfileImg());
-
-                                        break;
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<SearchResult> call, Throwable t) {
-
-                        }
-                    });
-                }else{
-                    userInfos.clear();
-                    searchActivityRecyclerViewAdapter.notifyDataSetChanged();
-                }*/
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-
-            }
-        });
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
-
         searchActivity_recyclerview.setLayoutManager(layoutManager);
-
-
         searchActivityRecyclerViewAdapter= new SearchActivityRecyclerViewAdapter(userInfos);
         searchActivity_recyclerview.setAdapter(searchActivityRecyclerViewAdapter);
 
@@ -294,7 +229,8 @@ public class SearchActivity extends AppCompatActivity {
                                                         }
                                                         final Bitmap bm = BitmapFactory.decodeStream(inputStream);
                                                         userInfo.setImage(bm);
-                                                        userInfos.add(userInfo);
+                                                        if(!userInfo.get_id().equals(CurrentUserInfo.getUser().getUserInfo().get_id()))
+                                                            userInfos.add(userInfo);
                                                     }
 
                                                     handler.sendEmptyMessage(0);

@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
         peopleFragment.setUserInfos(userInfos);                                                                        //people fragment로 userinfos객체리스트 전달
 
         getSupportFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,peopleFragment).commit();  //people fragment로 초기화
-        
+
         BottomNavigationView mainactivity_bottomnavigationview = findViewById(R.id.mainactivity_bottomnavigationview);
 
         mainactivity_bottomnavigationview.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {

@@ -23,8 +23,6 @@ public class UserInfoUpdate {
         try {
             HashMap<String, String> input = new HashMap<>();
             input.put("_id", _id);
-
-
             Retrofit retrofit = new Retrofit.Builder().baseUrl(url)
                     .addConverterFactory(GsonConverterFactory.create()).build();
             RetrofitApi retrofitApi = retrofit.create(RetrofitApi.class);
@@ -50,10 +48,9 @@ public class UserInfoUpdate {
                         }
                     }
                 }
-
                 @Override
                 public void onFailure(Call<LoginResult> call, Throwable t) {
-                    Log.d("12321","fail to connect");
+                    Log.d("12321","fail to connect :  update");
                 }
             });
         }catch (Exception e){

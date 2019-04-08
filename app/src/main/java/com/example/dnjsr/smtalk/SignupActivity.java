@@ -209,9 +209,7 @@ public class SignupActivity extends AppCompatActivity {
                                     }
                                 }
                             }
-
                         }
-
                         @Override
                         public void onFailure(Call<JoinResult> call, Throwable t) {
 
