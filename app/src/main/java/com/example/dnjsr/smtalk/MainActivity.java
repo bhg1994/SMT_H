@@ -9,23 +9,17 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.TypefaceSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,11 +27,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.dnjsr.smtalk.api.FriendListCallApi;
-import com.example.dnjsr.smtalk.api.LoginApi;
 import com.example.dnjsr.smtalk.api.RetrofitApi;
 import com.example.dnjsr.smtalk.fragment.ChatFragment;
 import com.example.dnjsr.smtalk.fragment.PeopleFragment;
@@ -47,17 +38,14 @@ import com.example.dnjsr.smtalk.globalVariables.IsLogin;
 import com.example.dnjsr.smtalk.globalVariables.ServerURL;
 import com.example.dnjsr.smtalk.info.RoomInfo;
 import com.example.dnjsr.smtalk.info.UserInfo;
-import com.example.dnjsr.smtalk.pattern.UserIdPattern;
+
 import com.example.dnjsr.smtalk.result.FriendListCallResult;
-import com.example.dnjsr.smtalk.result.LoginResult;
+
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.time.chrono.MinguoChronology;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +56,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity {
     ActionBar actionBar;
@@ -160,12 +147,6 @@ public class MainActivity extends AppCompatActivity {
 
         roomInfos = new ArrayList<>();
 
-        roomInfos.add(new RoomInfo("프젝","3"));
-        roomInfos.add(new RoomInfo("1학년과톡","15"));                                                              //roominfo 객체 input
-        roomInfos.add(new RoomInfo("ㅂㄹㅊㄱ","6"));
-        roomInfos.add(new RoomInfo("ㅂㄹㅊㄱ","6"));
-        roomInfos.add(new RoomInfo("ㅂㄹㅊㄱ","6"));
-        roomInfos.add(new RoomInfo("ㅂㄹㅊㄱ","6"));
 
         LayoutInflater inflater = getLayoutInflater();
         dialog_newfriend = inflater.inflate(R.layout.dialog_newfriend,null);

@@ -8,11 +8,12 @@
     android:layout_height="match_parent"
     tools:context=".ChatRoomActivity">
 
-    <ListView
-        android:layout_above="@id/chatrooomactivity_linearlayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </ListView>
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/chatroomactivity_recyclerview">
+
+    </android.support.v7.widget.RecyclerView>
 
 
     <LinearLayout
@@ -25,11 +26,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <android.support.design.widget.FloatingActionButton
+            app:backgroundTint="#000000"
+            app:elevation="0dp"
+            app:fabSize="mini"
+            android:id="@+id/chatroomactivity_floatingbutton_photo"
+            android:src="@drawable/icon_plus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <EditText
             android:textColor="@android:color/white"
             android:layout_weight="8"
             android:id="@+id/chatroomactivity_edittext_message"
             android:layout_width="wrap_content"
+            android:layout_marginLeft="5dp"
             android:layout_height="wrap_content" />
 
         <android.support.design.widget.FloatingActionButton

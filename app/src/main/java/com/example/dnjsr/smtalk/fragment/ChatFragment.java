@@ -72,8 +72,8 @@ public class ChatFragment extends android.support.v4.app.Fragment {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int i) {
             ((CustomViewHolder)viewHolder).chatroomitem_imageview.setImageResource(R.drawable.icon_account);
-            ((CustomViewHolder)viewHolder).chatroomitem_textview_chatroomname.setText(roomAdapterList.get(i).getRoomName());
-            ((CustomViewHolder)viewHolder).chatroomitem_textviewoomnumber.setText(roomAdapterList.get(i).getMemberNumber());
+            ((CustomViewHolder)viewHolder).chatroomitem_textview_chatroomname.setText(roomAdapterList.get(i).getUsersList().get(1).getUserName());
+
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -99,7 +99,7 @@ public class ChatFragment extends android.support.v4.app.Fragment {
                 super(view);
                 chatroomitem_imageview = view.findViewById(R.id.chatroomitem_imageview);
                 chatroomitem_textview_chatroomname = view.findViewById(R.id.chatroomitem_textview_chatroomname);
-                chatroomitem_textviewoomnumber = view.findViewById(R.id.chatroomitem_textview_chatroomnumber);
+
                 chatroomitem_textview_chatroomlastmessage = view.findViewById(R.id.chatroomitem_textview_chatroomlastmessage);
                 chatroomitem_textview_chatroomlastmessagetime = view.findViewById(R.id.chatroomitem_textview_chatroomlastmessagetime);
             }

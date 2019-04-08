@@ -15,11 +15,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.dnjsr.smtalk.api.IdCheckApi;
-import com.example.dnjsr.smtalk.api.JoinApi;
 import com.example.dnjsr.smtalk.api.RetrofitApi;
-import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
+
 import com.example.dnjsr.smtalk.globalVariables.ServerURL;
 import com.example.dnjsr.smtalk.info.UserInfo;
 import com.example.dnjsr.smtalk.pattern.UserIdPattern;

@@ -4,6 +4,7 @@ import com.example.dnjsr.smtalk.result.FriendListCallResult;
 import com.example.dnjsr.smtalk.result.IdCheckResult;
 import com.example.dnjsr.smtalk.result.JoinResult;
 import com.example.dnjsr.smtalk.result.LoginResult;
+import com.example.dnjsr.smtalk.result.RoomListCallResult;
 import com.example.dnjsr.smtalk.result.SearchResult;
 
 import java.util.HashMap;
@@ -54,5 +55,10 @@ public interface RetrofitApi {
     @FormUrlEncoded
     @POST("/update/user")
     Call<LoginResult> post_idForUpdate(@FieldMap HashMap<String,String> map);
+
+    //call room list
+    @FormUrlEncoded
+    @POST("/room/list")
+    Call<RoomListCallResult> post_idForRoomList(@FieldMap HashMap<String,String> map);
 
 }

@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
 import com.example.dnjsr.smtalk.info.RoomInfo;
 
 public class ChatRoomActivity extends AppCompatActivity {
@@ -19,10 +20,10 @@ public class ChatRoomActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(Color.parseColor("#2f2f30"));
         }
-        Bundle bundle = getIntent().getExtras();
-        RoomInfo roomInfo = bundle.getParcelable("roominfo");
+
+        RoomInfo roomInfo = CurrentUserInfo.getUser().getUserInfo().getRoomsList().get(0);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(roomInfo.getRoomName()+"   "+roomInfo.getMemberNumber());
+        actionBar.setTitle(roomInfo.getUsersList().get(1).getUserName());
     }
 }

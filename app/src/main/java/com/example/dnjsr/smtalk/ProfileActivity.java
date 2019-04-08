@@ -1,13 +1,11 @@
 package com.example.dnjsr.smtalk;
 
-import android.app.Activity;
+
 import android.content.Intent;
-import android.graphics.Bitmap;
+
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
+
 import android.os.Build;
-import android.os.Parcelable;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,17 +14,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.example.dnjsr.smtalk.api.FriendAddApi;
-import com.example.dnjsr.smtalk.api.FriendDeleteApi;
 import com.example.dnjsr.smtalk.api.RetrofitApi;
-import com.example.dnjsr.smtalk.fragment.PeopleFragment;
+
 import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
 import com.example.dnjsr.smtalk.globalVariables.SelectedUserInfo;
 import com.example.dnjsr.smtalk.globalVariables.ServerURL;
-import com.example.dnjsr.smtalk.info.User;
+
 import com.example.dnjsr.smtalk.info.UserInfo;
 import com.example.dnjsr.smtalk.result.JoinResult;
+import com.example.dnjsr.smtalk.userInfoUpdate.RoomsListCall;
 import com.example.dnjsr.smtalk.userInfoUpdate.UserInfoUpdate;
 
 import java.util.HashMap;
@@ -42,6 +38,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView profileactivity_textview_username;
     private TextView profileactivity_textview_usermessage;
     private Button profileactivity_button_friendAdd;
+    private Button profileactivity_button_chatCreate;
     String serverUrl = new ServerURL().getUrl();
     UserInfo currentUser = CurrentUserInfo.getUser().getUserInfo();
     UserInfoUpdate userInfoUpdate = new UserInfoUpdate();
@@ -64,6 +61,8 @@ public class ProfileActivity extends AppCompatActivity {
         profileactivity_textview_username = findViewById(R.id.profileactivity_textview_username);
         profileactivity_textview_usermessage =findViewById(R.id.profileactivity_textview_usermessage);
         profileactivity_button_friendAdd = findViewById(R.id.profileactivity_button_friendAdd);
+        profileactivity_button_chatCreate = findViewById(R.id.profileactivity_button_chatCreate);
+
 
         profileactivity_imageview_profileimage.setImageBitmap(userinfo.getImage());
         profileactivity_textview_username.setText(userinfo.getUserName());
@@ -81,6 +80,14 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(),ProfilepictureActivity.class);
                 startActivity(intent);
+            }
+        });
+        profileactivity_button_chatCreate.setOnClickListener(new View.OnClickListener() {               //image눌러 화면이동
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(v.getContext(),ChatRoomActivity.class);
+
             }
         });
 

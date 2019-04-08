@@ -3,14 +3,13 @@ package com.example.dnjsr.smtalk.userInfoUpdate;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.example.dnjsr.smtalk.api.LoginApi;
+
 import com.example.dnjsr.smtalk.api.RetrofitApi;
 import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
 import com.example.dnjsr.smtalk.globalVariables.IsLogin;
 import com.example.dnjsr.smtalk.globalVariables.ServerURL;
-import com.example.dnjsr.smtalk.info.User;
+
 import com.example.dnjsr.smtalk.info.UserInfo;
 import com.example.dnjsr.smtalk.result.LoginResult;
 

@@ -5,11 +5,13 @@ import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
 import com.example.dnjsr.smtalk.globalVariables.IsLogin;
 import com.example.dnjsr.smtalk.userInfoUpdate.UserLogin;
 
@@ -43,6 +45,8 @@ public class LoginActivity extends AppCompatActivity {
                 else{
                     UserLogin userLogin = new UserLogin();
                     userLogin.Login(id.getText().toString(),password.getText().toString(),new Intent(LoginActivity.this,MainActivity.class),LoginActivity.this);
+
+
                 }
             }
         });

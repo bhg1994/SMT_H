@@ -12,9 +12,9 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
-@SuppressLint("ParcelCreator")
 public class UserInfo implements Parcelable{
     String userId;
     String userPassword;
@@ -26,18 +26,7 @@ public class UserInfo implements Parcelable{
     String profileImg;
     Bitmap image;
     Boolean isChange = false;
-
-    public UserInfo(String userId, String userPassword, String userName, String profileImgUrl, String comment, String _id, List<UserInfo> friendsList, String profileImg, Bitmap image) {
-        this.userId = userId;
-        this.userPassword = userPassword;
-        this.userName = userName;
-        this.profileImgUrl = profileImgUrl;
-        this.comment = comment;
-        this._id = _id;
-        this.friendsList = friendsList;
-        this.profileImg = profileImg;
-        this.image = image;
-    }
+    ArrayList<RoomInfo> roomsList;
 
     public String getUserId() {
         return userId;
@@ -119,9 +108,26 @@ public class UserInfo implements Parcelable{
         isChange = change;
     }
 
-    public static Creator<UserInfo> getCREATOR() {
-        return CREATOR;
+    public ArrayList<RoomInfo> getRoomsList() {
+        return roomsList;
     }
+
+    public void setRoomsList(ArrayList<RoomInfo> roomsList) {
+        this.roomsList = roomsList;
+    }
+
+    public UserInfo(String userId, String userPassword, String userName, String profileImgUrl, String comment, String _id, List<UserInfo> friendsList, String profileImg, Bitmap image) {
+        this.userId = userId;
+        this.userPassword = userPassword;
+        this.userName = userName;
+        this.profileImgUrl = profileImgUrl;
+        this.comment = comment;
+        this._id = _id;
+        this.friendsList = friendsList;
+        this.profileImg = profileImg;
+        this.image = image;
+    }
+
 
     protected UserInfo(Parcel in) {
         userId = in.readString();
@@ -135,6 +141,7 @@ public class UserInfo implements Parcelable{
         image = in.readParcelable(Bitmap.class.getClassLoader());
         byte tmpIsChange = in.readByte();
         isChange = tmpIsChange == 0 ? null : tmpIsChange == 1;
+        roomsList = in.createTypedArrayList(RoomInfo.CREATOR);
     }
 
     public static final Creator<UserInfo> CREATOR = new Creator<UserInfo>() {
@@ -166,6 +173,7 @@ public class UserInfo implements Parcelable{
         dest.writeString(profileImg);
         dest.writeParcelable(image, flags);
         dest.writeByte((byte) (isChange == null ? 0 : isChange ? 1 : 2));
+        dest.writeTypedList(roomsList);
     }
 }
 
