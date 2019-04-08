@@ -1,5 +1,6 @@
 package com.example.dnjsr.smtalk;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -57,47 +58,33 @@ public class ProfileActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(Color.parseColor("#2f2f30"));
         }
 
-
-        Bundle bundle = getIntent().getExtras();
-
-
-
         final UserInfo userinfo = SelectedUserInfo.getUser().getUserInfo();
-
 
         profileactivity_imageview_profileimage = findViewById(R.id.profileactivity_imageview_profileimage);
         profileactivity_textview_username = findViewById(R.id.profileactivity_textview_username);
         profileactivity_textview_usermessage =findViewById(R.id.profileactivity_textview_usermessage);
         profileactivity_button_friendAdd = findViewById(R.id.profileactivity_button_friendAdd);
-        //Glide.with(this).load(userInfo.getProfileImg()).into(profileactivity_imageview_profileimage);
-
 
         profileactivity_imageview_profileimage.setImageBitmap(userinfo.getImage());
         profileactivity_textview_username.setText(userinfo.getUserName());
         profileactivity_textview_usermessage.setText(userinfo.getComment());
-        Log.d("12321",Integer.toString(currentUser.getFriendsList().size()));
 
         for (int i=0; i<currentUser.getFriendsList().size();i++){
             Log.d("12321",userinfo.get_id());
             Log.d("12321",currentUser.getFriendsList().get(i).get_id());
             if(currentUser.getFriendsList().get(i).get_id().equals(userinfo.get_id())){
-
                 isFriend=true;
+                break;
             }
         }
-
 
         profileactivity_imageview_profileimage.setOnClickListener(new View.OnClickListener() {               //image눌러 화면이동
             @Override
             public void onClick(View v) {
-
-
                 Intent intent = new Intent(v.getContext(),ProfilepictureActivity.class);
-
                 startActivity(intent);
             }
         });
-
 
         Log.d("12321",Boolean.toString(isFriend));
 
@@ -115,6 +102,7 @@ public class ProfileActivity extends AppCompatActivity {
                     DeleteFriend(myId,friendId);
                 else
                     AddFriend(myId,friendId);
+                userInfoUpdate.Update(CurrentUserInfo.getUser().getUserInfo().get_id(),ProfileActivity.this);
             }
         });
 
@@ -137,13 +125,11 @@ public class ProfileActivity extends AppCompatActivity {
                     JoinResult searchResult = response.body();
                     switch (searchResult.getResult()) {
                         case 0:
-                            Log.d("test123","fail");
+                            Log.d("test123","FAfail");
                             break;
                         case 1:
-                            Log.d("test123","sucess");
-                            userInfoUpdate.Update(CurrentUserInfo.getUser().getUserInfo().get_id());
-                            Log.d("test123",Boolean.toString(CurrentUserInfo.getUser().getUserInfo().getChange()));
-                            finish();
+                            Log.d("test123","FAsucess");
+
                             break;
                     }
                 }
@@ -171,14 +157,10 @@ public class ProfileActivity extends AppCompatActivity {
                     JoinResult result = response.body();
                     switch (result.getResult()) {
                         case 0:
-                            Log.d("test123","fail");
+                            Log.d("test123","FDfail");
                             break;
                         case 1:
-                            Log.d("test123","sucess");
-                            userInfoUpdate.Update(CurrentUserInfo.getUser().getUserInfo().get_id());
-
-                            Log.d("test123",Integer.toString(CurrentUserInfo.getUser().getUserInfo().getFriendsList().size()));
-                            finish();
+                            Log.d("test123","FDsucess");
                             break;
                     }
                 }

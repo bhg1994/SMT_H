@@ -1,9 +1,7 @@
 package com.example.dnjsr.smtalk.userInfoUpdate;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.util.Log;
-import android.widget.Toast;
-
 import com.example.dnjsr.smtalk.api.RetrofitApi;
 import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
 import com.example.dnjsr.smtalk.globalVariables.ServerURL;
@@ -20,12 +18,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UserInfoUpdate {
     String url = ServerURL.getUrl();
-    int resultCode;
-    public int Update(String _id){
+
+    public void Update(String _id, final Activity activity){
         try {
             HashMap<String, String> input = new HashMap<>();
-            input.put("_Id", _id);
-
+            input.put("_id", _id);
 
 
             Retrofit retrofit = new Retrofit.Builder().baseUrl(url)
@@ -40,14 +37,14 @@ public class UserInfoUpdate {
                             switch (map.getResult()) {
                                 case 0:
                                     Log.d("12321","update fail");
-                                    resultCode = 0;
+
                                     break;
                                 case 1:
                                     Log.d("12321","update ok");
                                     UserInfo userinfo = map.getUserInfo();
                                     userinfo.setChange(true);
                                     CurrentUserInfo.getUser().setUserInfo(userinfo);
-                                    resultCode = 1;
+                                    activity.finish();
                                     break;
                             }
                         }
@@ -56,13 +53,11 @@ public class UserInfoUpdate {
 
                 @Override
                 public void onFailure(Call<LoginResult> call, Throwable t) {
-
+                    Log.d("12321","fail to connect");
                 }
             });
         }catch (Exception e){
             e.printStackTrace();
         }
-        return resultCode;
-
     }
 }

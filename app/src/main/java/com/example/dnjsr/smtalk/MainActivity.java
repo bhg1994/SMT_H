@@ -87,28 +87,20 @@ public class MainActivity extends AppCompatActivity {
     Handler handler;
     ServerURL serverURL = new ServerURL();
     final String currentServer = serverURL.getUrl();
+    UserInfo currentUser ;
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-            Log.d("12321","onstart");
-
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d("12321","onrestart");
-
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        /*if(IsLogin.isIsLogin())
-            Log.d("12321", Boolean.toString(CurrentUserInfo.getUser().getUserInfo().getChange()));*/
-        Log.d("12321","resume");
+        currentUser = CurrentUserInfo.getUser().getUserInfo();
+        if(IsLogin.isIsLogin()) {
+            if (currentUser.getChange()) {
+                LoadingThread(CurrentUserInfo.getUser().getUserInfo());
+                currentUser.setChange(false);
+                //Log.d("12321","onresume");
+            }
+        }
     }
 
     @Override
@@ -155,8 +147,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d("12321","oncreate1");
 
-
-
         handler = new Handler(){
 
             @Override
@@ -168,17 +158,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        UserInfo currentUser = CurrentUserInfo.getUser().getUserInfo();
-        if(IsLogin.isIsLogin()) {
-
-            Log.d("12321","oncreate2");
-            if (currentUser.getChange()) {
-
-                LoadingThread(CurrentUserInfo.getUser().getUserInfo());
-                currentUser.setChange(false);
-            }
-        }
-
         roomInfos = new ArrayList<>();
 
         roomInfos.add(new RoomInfo("프젝","3"));
@@ -188,15 +167,11 @@ public class MainActivity extends AppCompatActivity {
         roomInfos.add(new RoomInfo("ㅂㄹㅊㄱ","6"));
         roomInfos.add(new RoomInfo("ㅂㄹㅊㄱ","6"));
 
-//        ---------------------------------------------------------------------------------------------------------------------------------------------
-
-//        LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
         LayoutInflater inflater = getLayoutInflater();
         dialog_newfriend = inflater.inflate(R.layout.dialog_newfriend,null);
         dialog_newroom = inflater.inflate(R.layout.dialog_newroom,null);                      //dialog layout inflate
 
         peopleFragment = new PeopleFragment();
-
         chatFragment = new ChatFragment();
         settingFragment = new SettingFragment();
 
@@ -205,14 +180,11 @@ public class MainActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(Color.parseColor("#2f2f30"));
         }
 
-        /*Intent intent = getIntent();
-        UserInfo userInfo = intent.getParcelableExtra("userinfo");*/
         chatFragment.setRoomAdapterList(roomInfos);                                                                     //chat fragment로 roominfos객체리스트 전달
         peopleFragment.setUserInfos(userInfos);                                                                        //people fragment로 userinfos객체리스트 전달
 
         getSupportFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,peopleFragment).commit();  //people fragment로 초기화
-
-
+        
         BottomNavigationView mainactivity_bottomnavigationview = findViewById(R.id.mainactivity_bottomnavigationview);
 
         mainactivity_bottomnavigationview.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -300,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-
+                    userInfos.clear();
                     HashMap<String, String> input = new HashMap<>();
                     input.put("_id", userinfo.get_id());
 

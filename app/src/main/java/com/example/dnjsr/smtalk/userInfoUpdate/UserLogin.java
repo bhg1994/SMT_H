@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.example.dnjsr.smtalk.api.LoginApi;
 import com.example.dnjsr.smtalk.api.RetrofitApi;
 import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
+import com.example.dnjsr.smtalk.globalVariables.IsLogin;
 import com.example.dnjsr.smtalk.globalVariables.ServerURL;
 import com.example.dnjsr.smtalk.info.User;
 import com.example.dnjsr.smtalk.info.UserInfo;
@@ -59,7 +60,7 @@ public class UserLogin {
                                             userinfo.setChange(true);
                                             CurrentUserInfo.getUser().setUserInfo(userinfo);
                                             UserInfo asd = CurrentUserInfo.getUser().getUserInfo();
-
+                                            IsLogin.setIsLogin(true);
                                             Log.d("12321",asd.get_id());
                                             activity.startActivity(intent);
                                             activity.finish();

@@ -50,9 +50,10 @@ public interface RetrofitApi {
     @GET("/search/user/{userId}")
     Call<SearchResult> postIdForSearch(@Path("userId") String searchId);
 
+
     //update
     @FormUrlEncoded
-    @POST("/friend/list")
+    @POST("/update/user")
     Call<LoginResult> post_idForUpdate(@FieldMap HashMap<String,String> map);
 
 }
