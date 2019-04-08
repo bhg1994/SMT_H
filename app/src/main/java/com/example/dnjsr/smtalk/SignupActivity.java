@@ -18,11 +18,14 @@ import android.widget.Toast;
 
 import com.example.dnjsr.smtalk.api.IdCheckApi;
 import com.example.dnjsr.smtalk.api.JoinApi;
+import com.example.dnjsr.smtalk.api.RetrofitApi;
+import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
 import com.example.dnjsr.smtalk.globalVariables.ServerURL;
 import com.example.dnjsr.smtalk.info.UserInfo;
 import com.example.dnjsr.smtalk.pattern.UserIdPattern;
 import com.example.dnjsr.smtalk.result.IdCheckResult;
 import com.example.dnjsr.smtalk.result.JoinResult;
+import com.example.dnjsr.smtalk.userInfoUpdate.UserLogin;
 
 import java.util.HashMap;
 
@@ -74,8 +77,8 @@ public class SignupActivity extends AppCompatActivity {
                         Retrofit retrofit = new Retrofit.Builder().baseUrl(currentSever)
                                 .addConverterFactory(GsonConverterFactory.create()).build();
 
-                        IdCheckApi idCheckApi = retrofit.create(IdCheckApi.class);
-                        idCheckApi.getUserId(userId).enqueue(new Callback<IdCheckResult>() {
+                        RetrofitApi retrofitApi = retrofit.create(RetrofitApi.class);
+                        retrofitApi.idCheck(userId).enqueue(new Callback<IdCheckResult>() {
                             @Override
                             public void onResponse(Call<IdCheckResult> call, Response<IdCheckResult> response) {
                                 if (response.isSuccessful()) {
@@ -185,9 +188,9 @@ public class SignupActivity extends AppCompatActivity {
                     Retrofit retrofit = new Retrofit.Builder().baseUrl(currentSever)
                             .addConverterFactory(GsonConverterFactory.create()).build();
 
-                    JoinApi joinApi = retrofit.create(JoinApi.class);
+                    RetrofitApi retrofitApi = retrofit.create(RetrofitApi.class);
 
-                    joinApi.postJoinUserInfo(input).enqueue(new Callback<JoinResult>() {
+                    retrofitApi.postJoinUserInfo(input).enqueue(new Callback<JoinResult>() {
                         @Override
                         public void onResponse(Call<JoinResult> call, Response<JoinResult> response) {
                             if(response.isSuccessful()){
@@ -200,17 +203,9 @@ public class SignupActivity extends AppCompatActivity {
                                             break;
                                         case 1:
                                             Toast.makeText(SignupActivity.this, "회원가입 되었습니다.", Toast.LENGTH_SHORT).show(); //아이디 비밀번호 비워둔 Login창
-                                            startActivity(new Intent(SignupActivity.this,LoginActivity.class));
-                                            finish();
+                                            UserLogin userLogin = new UserLogin();
+                                            userLogin.Login(id.getText().toString(),password.getText().toString(),new Intent(SignupActivity.this,MainActivity.class),SignupActivity.this);
                                             break;
-
-                                            /*UserInfo userInfo = new UserInfo(id.getText().toString(),password.getText().toString(), //아이디 비밀번호 저장된 login창
-                                                    name.getText().toString(),"","","");
-                                            Intent intent = new Intent(SignupActivity.this,LoginActivity.class);
-                                            intent.putExtra("userinfo",userInfo);
-                                            startActivity(intent);
-                                            finish();*/
-
                                     }
                                 }
                             }

@@ -3,6 +3,7 @@ package com.example.dnjsr.smtalk.fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -21,10 +22,12 @@ import android.widget.TextView;
 
 import com.example.dnjsr.smtalk.ProfileActivity;
 import com.example.dnjsr.smtalk.R;
+import com.example.dnjsr.smtalk.globalVariables.SelectedUserInfo;
 import com.example.dnjsr.smtalk.globalVariables.ServerURL;
 import com.example.dnjsr.smtalk.info.UserInfo;
 import com.github.nkzawa.socketio.client.Url;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -34,13 +37,6 @@ public class PeopleFragment extends Fragment {
 
 
     List<UserInfo> userInfos = new ArrayList<>();
-    ServerURL serverURL = new ServerURL();
-    String currentServer = serverURL.getUrl();
-
-    public List<UserInfo> getUserInfos() {
-        return userInfos;
-    }
-
     public void setUserInfos(List<UserInfo> userInfos) {
         this.userInfos = userInfos;
     }
@@ -49,7 +45,12 @@ public class PeopleFragment extends Fragment {
     private ImageView peoplefragment_imageview_search;
     private TextView peoplefragment_textview_friendlist;
     private PeopleFragmentRecyclerViewAdapter peopleFragmentRecyclerViewAdapter;
-    
+
+    public void dataChange(ArrayList<UserInfo> userInfos){
+        peopleFragmentRecyclerViewAdapter.filterList(userInfos);
+    }
+
+
 
 
     @Nullable
@@ -60,22 +61,6 @@ public class PeopleFragment extends Fragment {
         peoplefragment_imageview_search = view.findViewById(R.id.peoplefragment_imageview_search);
         peoplefragment_edittext_search = view.findViewById(R.id.peoplefragment_edittext_search);
         peoplefragment_textview_friendlist = view.findViewById(R.id.peoplefragment_textview_friendlist);
-
-       //userInfos = new ArrayList<>();                               //친구목록 data input
-
-        /*userInfos.add(new UserInfo("ww","wonkyo","wonkyo","","오늘 코딩 ㄴ","hi"));
-        userInfos.add(new UserInfo("ww","wonkyo","dong","","오늘 코딩 ㄴ","hi"));
-        userInfos.add(new UserInfo("ww","wonkyo","gun","","오늘 코딩 ㄴ","hi"));
-        userInfos.add(new UserInfo("ww","wonkyo","wkyo","","오늘 코딩 ㄴ","hi"));
-        userInfos.add(new UserInfo("ww","wonkyo","hyo","","오늘 코딩 ㄴ","hi"));
-        userInfos.add(new UserInfo("ww","wonkyo","ggggyo","","오늘 코딩 ㄴ","hi"));
-        userInfos.add(new UserInfo("ww","wonkyo","woleho","","오늘 코딩 ㄴ","hi"));
-        userInfos.add(new UserInfo("ww","wonkyo","wttyo","","오늘 코딩 ㄴ","hi"));
-        userInfos.add(new UserInfo("ww","wonkyo","이동o","","오늘 코딩 ㄴ","hi"));
-        userInfos.add(new UserInfo("ww","wonkyo","w원교yo","","오늘 코딩 ㄴ","hi"));
-        userInfos.add(new UserInfo("ww","wonkyo","wo효근o","","오늘 코딩 ㄴ","hi"));*/
-
-
 
         peoplefragment_edittext_search.addTextChangedListener(new TextWatcher() {
             @Override
@@ -97,6 +82,8 @@ public class PeopleFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         peopleFragmentRecyclerViewAdapter = new PeopleFragmentRecyclerViewAdapter();
         recyclerView.setAdapter(peopleFragmentRecyclerViewAdapter);
+
+
         return view;
 
     }
@@ -123,9 +110,10 @@ public class PeopleFragment extends Fragment {
 
         public PeopleFragmentRecyclerViewAdapter() {
 
+
             adapterList = new ArrayList<UserInfo>();                                    //filtering된 친구목록
 
-           for(UserInfo userInfo : userInfos){
+            for(UserInfo userInfo : userInfos){
                 adapterList.add(userInfo);
             }
             peoplefragment_textview_friendlist.setText("친구 "+ adapterList.size());
@@ -140,15 +128,15 @@ public class PeopleFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder viewHolder, final int i) {
-            ((CustomViewHolder)viewHolder).profileImage.set(adapterList.get(i).getProfileImg());
+
+            ((CustomViewHolder)viewHolder).profileImage.setImageBitmap(adapterList.get(i).getImage());
             ((CustomViewHolder)viewHolder).textview_name.setText(adapterList.get(i).getUserName());
             ((CustomViewHolder)viewHolder).textview_message.setText(adapterList.get(i).getComment());
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    UserInfo seletedUserInfo = new UserInfo(adapterList.get(i).getUserName(),adapterList.get(i).getComment(),adapterList.get(i).getProfileImg());
+                    SelectedUserInfo.getUser().setUserInfo(adapterList.get(i));
                     Intent intent = new Intent(v.getContext(),ProfileActivity.class);
-                    intent.putExtra("selectedinfo",seletedUserInfo);
                     startActivity(intent);
                 }
             });

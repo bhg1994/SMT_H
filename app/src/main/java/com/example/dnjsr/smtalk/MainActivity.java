@@ -1,5 +1,6 @@
 package com.example.dnjsr.smtalk;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Message;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,9 +38,12 @@ import android.widget.Toast;
 
 import com.example.dnjsr.smtalk.api.FriendListCallApi;
 import com.example.dnjsr.smtalk.api.LoginApi;
+import com.example.dnjsr.smtalk.api.RetrofitApi;
 import com.example.dnjsr.smtalk.fragment.ChatFragment;
 import com.example.dnjsr.smtalk.fragment.PeopleFragment;
 import com.example.dnjsr.smtalk.fragment.SettingFragment;
+import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
+import com.example.dnjsr.smtalk.globalVariables.IsLogin;
 import com.example.dnjsr.smtalk.globalVariables.ServerURL;
 import com.example.dnjsr.smtalk.info.RoomInfo;
 import com.example.dnjsr.smtalk.info.UserInfo;
@@ -63,6 +68,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static java.lang.Thread.sleep;
+
 public class MainActivity extends AppCompatActivity {
     ActionBar actionBar;
     MenuInflater inflater;
@@ -75,8 +82,34 @@ public class MainActivity extends AppCompatActivity {
     static View dialog_newfriend;
     static String roomname;
     static String membercount;
-    List<UserInfo> userInfos;
+    List<UserInfo> userInfos= new ArrayList<>();
     List<RoomInfo> roomInfos;
+    Handler handler;
+    ServerURL serverURL = new ServerURL();
+    final String currentServer = serverURL.getUrl();
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+            Log.d("12321","onstart");
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d("12321","onrestart");
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        /*if(IsLogin.isIsLogin())
+            Log.d("12321", Boolean.toString(CurrentUserInfo.getUser().getUserInfo().getChange()));*/
+        Log.d("12321","resume");
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -101,154 +134,52 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.item_newfriend:
-                DialogFragment friendDialogFragmnet = new FriendDialogFragment();
-                friendDialogFragmnet.setCancelable(false);
-                friendDialogFragmnet.show(getSupportFragmentManager(),"frienddialogfragment");
+                getSupportFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,peopleFragment).commit();
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.item_newroom:
                 DialogFragment roomDialogFragmnet = new RoomDialogFragment();
                 roomDialogFragmnet.setCancelable(false);
                 roomDialogFragmnet.show(getSupportFragmentManager(),"roomdialogfragment");
                 return true;
-                default:
-                    return super.onOptionsItemSelected(item);
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
     }
 
+    @SuppressLint("HandlerLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ServerURL serverURL = new ServerURL();
-        final String currentServer = serverURL.getUrl();
+        Log.d("12321","oncreate1");
 
-        userInfos = new ArrayList<>();
-        Bundle bundle = getIntent().getExtras();
-        final UserInfo userinfo = bundle.getParcelable("userinfo");
 
-        Thread thread = new Thread(new Runnable() {
+
+        handler = new Handler(){
+
             @Override
-            public void run() {
-                try{
-                    HashMap<String, String> input = new HashMap<>();
-                    input.put("_id", userinfo.get_id());
-
-                    Retrofit retrofit = new Retrofit.Builder().baseUrl(currentServer)
-                            .addConverterFactory(GsonConverterFactory.create()).build();
-                    FriendListCallApi friendListCallApi = retrofit.create(FriendListCallApi.class);
-                    friendListCallApi.postUserInfo(input).enqueue(new Callback<FriendListCallResult>() {
-                        @Override
-                        public void onResponse(Call<FriendListCallResult> call, Response<FriendListCallResult> response) {
-                            if (response.isSuccessful()) {
-                                final FriendListCallResult map = response.body();
-                                if (map != null) {
-                                    switch (map.getResult()) {
-                                        case -1:
-                                            Toast.makeText(MainActivity.this, "데이터 베이스 오류입니다.", Toast.LENGTH_SHORT).show();
-                                            break;
-                                        case 0:
-                                            Toast.makeText(MainActivity.this, "로드 실패.", Toast.LENGTH_SHORT).show();
-                                            break;
-                                        case 1:
-                                            Thread thread_inner = new Thread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    for (UserInfo userInfo : map.getFriendsList()) {
-                                                        URL url = null;
-                                                        try {
-                                                            url = new URL(currentServer + userInfo.getProfileImgUrl());
-                                                        } catch (MalformedURLException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                            URI uri = null;
-                                                        try {
-                                                            uri = url.toURI();
-                                                        } catch (URISyntaxException e) {
-                                                            e.printStackTrace();
-                                                        }
-
-                                                        /*InputStream inputStream = null;
-                                                        try {
-                                                            inputStream = url.openStream();
-                                                        } catch (IOException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                        final Bitmap bm = BitmapFactory.decodeStream(inputStream);
-                                                        userInfo.setProfileImg(bm);*/
-                                                        userInfo.setProfileImg(uri);
-                                                        userInfos.add(userInfo);
-                                                    }
-                                                }
-                                            });
-                                            thread_inner.start();
-
-
-                                            Toast.makeText(MainActivity.this,map.getFriendsList().get(0).getUserName(), Toast.LENGTH_SHORT).show();
-                                            break;
-                                    }
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<FriendListCallResult> call, Throwable t) {
-
-                        }
-
-                    });
-                }catch (Exception e){
-                    e.printStackTrace();
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if(msg.what == 0) {
+                    peopleFragment.dataChange((ArrayList<UserInfo>) userInfos);
                 }
             }
-        });
-        thread.start();
-        /*try {
-            HashMap<String, String> input = new HashMap<>();
-            input.put("_id", userinfo.get_id());
+        };
 
-            Retrofit retrofit = new Retrofit.Builder().baseUrl(currentServer)
-                    .addConverterFactory(GsonConverterFactory.create()).build();
-            FriendListCallApi friendListCallApi = retrofit.create(FriendListCallApi.class);
-            friendListCallApi.postUserInfo(input).enqueue(new Callback<FriendListCallResult>() {
-                @Override
-                public void onResponse(Call<FriendListCallResult> call, Response<FriendListCallResult> response) {
-                    if (response.isSuccessful()) {
-                        FriendListCallResult map = response.body();
-                        if (map != null) {
-                            switch (map.getResult()) {
-                                case -1:
-                                    Toast.makeText(MainActivity.this, "데이터 베이스 오류입니다.", Toast.LENGTH_SHORT).show();
-                                    break;
-                                case 0:
-                                    Toast.makeText(MainActivity.this, "로드 실패.", Toast.LENGTH_SHORT).show();
-                                    break;
-                                case 1:
-                                    for(UserInfo userInfo : map.getFriendsList()){
-                                        userInfos.add(userInfo);
-                                    }
-                                    Toast.makeText(MainActivity.this,map.getFriendsList().get(0).getUserName(), Toast.LENGTH_SHORT).show();
-                                    break;
-                            }
-                        }
-                    }
-                }
+        UserInfo currentUser = CurrentUserInfo.getUser().getUserInfo();
+        if(IsLogin.isIsLogin()) {
 
-                @Override
-                public void onFailure(Call<FriendListCallResult> call, Throwable t) {
+            Log.d("12321","oncreate2");
+            if (currentUser.getChange()) {
 
-                }
-
-            });
-        }catch (Exception e){
-            e.printStackTrace();
-        }*/
-
-        //userInfos = new ArrayList<>();
+                LoadingThread(CurrentUserInfo.getUser().getUserInfo());
+                currentUser.setChange(false);
+            }
+        }
 
         roomInfos = new ArrayList<>();
-
-
 
         roomInfos.add(new RoomInfo("프젝","3"));
         roomInfos.add(new RoomInfo("1학년과톡","15"));                                                              //roominfo 객체 input
@@ -265,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
         dialog_newroom = inflater.inflate(R.layout.dialog_newroom,null);                      //dialog layout inflate
 
         peopleFragment = new PeopleFragment();
+
         chatFragment = new ChatFragment();
         settingFragment = new SettingFragment();
 
@@ -273,14 +205,13 @@ public class MainActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(Color.parseColor("#2f2f30"));
         }
 
-
-
-
         /*Intent intent = getIntent();
         UserInfo userInfo = intent.getParcelableExtra("userinfo");*/
         chatFragment.setRoomAdapterList(roomInfos);                                                                     //chat fragment로 roominfos객체리스트 전달
-        peopleFragment.setUserInfos(userInfos);                                                                         //people fragment로 userinfos객체리스트 전달
+        peopleFragment.setUserInfos(userInfos);                                                                        //people fragment로 userinfos객체리스트 전달
+
         getSupportFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,peopleFragment).commit();  //people fragment로 초기화
+
 
         BottomNavigationView mainactivity_bottomnavigationview = findViewById(R.id.mainactivity_bottomnavigationview);
 
@@ -314,7 +245,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-
     }
 
     public static class FriendDialogFragment extends DialogFragment{
@@ -362,4 +292,78 @@ public class MainActivity extends AppCompatActivity {
             return builder.create();
         }
     }
+
+    public void LoadingThread(final UserInfo userinfo) {
+
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    HashMap<String, String> input = new HashMap<>();
+                    input.put("_id", userinfo.get_id());
+
+                    Retrofit retrofit = new Retrofit.Builder().baseUrl(currentServer)
+                            .addConverterFactory(GsonConverterFactory.create()).build();
+                    RetrofitApi retrofitApi = retrofit.create(RetrofitApi.class);
+                    retrofitApi.postUserInfoForFriendList(input).enqueue(new Callback<FriendListCallResult>() {
+                        @Override
+                        public void onResponse(Call<FriendListCallResult> call, Response<FriendListCallResult> response) {
+                            if (response.isSuccessful()) {
+                                final FriendListCallResult map = response.body();
+                                if (map != null) {
+                                    switch (map.getResult()) {
+                                        case -1:
+                                            Toast.makeText(MainActivity.this, "데이터 베이스 오류입니다.", Toast.LENGTH_SHORT).show();
+                                            break;
+                                        case 0:
+                                            Toast.makeText(MainActivity.this, "친구없는 "+ userinfo.getUserName() + " 환영합니다!", Toast.LENGTH_LONG).show();
+                                            break;
+                                        case 1:
+                                            Thread thread_inner = new Thread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    CurrentUserInfo.getUser().getUserInfo().setFriendsList(map.getFriendsList());
+                                                    for (UserInfo userInfo : map.getFriendsList()) {
+                                                        URL url = null;
+                                                        try {
+                                                            url = new URL(currentServer + userInfo.getProfileImgUrl());
+                                                        } catch (MalformedURLException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        InputStream inputStream = null;
+                                                        try {
+                                                            inputStream = url.openStream();
+                                                        } catch (IOException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        final Bitmap bm = BitmapFactory.decodeStream(inputStream);
+                                                        userInfo.setImage(bm);
+                                                        userInfos.add(userInfo);
+                                                    }
+                                                    handler.sendEmptyMessage(0);
+                                                }
+                                            });
+                                            thread_inner.start();
+                                            Toast.makeText(MainActivity.this, userinfo.getUserName() + " 환영합니다!", Toast.LENGTH_SHORT).show();
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                        @Override
+                        public void onFailure(Call<FriendListCallResult> call, Throwable t) {
+
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+        thread.start();
+    }
+
 }
