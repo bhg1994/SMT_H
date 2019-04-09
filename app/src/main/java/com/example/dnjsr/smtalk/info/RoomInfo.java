@@ -3,65 +3,37 @@ package com.example.dnjsr.smtalk.info;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 public class RoomInfo implements Parcelable {
-    String lastChat;
     int unreadCount;
-    ArrayList<UserInfo> usersList;
-    Date createAt;
+    ArrayList<HashMap<String,String>> usersList;
     String _id;
 
-    public String getLastChat() {
-        return lastChat;
-    }
-
-    public void setLastChat(String lastChat) {
-        this.lastChat = lastChat;
-    }
-
-    public int getUnreadCount() {
-        return unreadCount;
-    }
-
-    public void setUnreadCount(int unreadCount) {
+    public RoomInfo(int unreadCount, ArrayList<HashMap<String, String>> usersList, String _id) {
         this.unreadCount = unreadCount;
-    }
-
-    public ArrayList<UserInfo> getUsersList() {
-        return usersList;
-    }
-
-    public void setUsersList(ArrayList<UserInfo> usersList) {
         this.usersList = usersList;
-    }
-
-    public Date getCreateAt() {
-        return createAt;
-    }
-
-    public void setCreateAt(Date createAt) {
-        this.createAt = createAt;
-    }
-
-    public String get_id() {
-        return _id;
-    }
-
-    public void set_id(String _id) {
         this._id = _id;
     }
 
-    public static Creator<RoomInfo> getCREATOR() {
-        return CREATOR;
-    }
 
     protected RoomInfo(Parcel in) {
-        lastChat = in.readString();
         unreadCount = in.readInt();
-        usersList = in.createTypedArrayList(UserInfo.CREATOR);
         _id = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(unreadCount);
+        dest.writeString(_id);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<RoomInfo> CREATOR = new Creator<RoomInfo>() {
@@ -76,17 +48,28 @@ public class RoomInfo implements Parcelable {
         }
     };
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public int getUnreadCount() {
+        return unreadCount;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(lastChat);
-        dest.writeInt(unreadCount);
-        dest.writeTypedList(usersList);
-        dest.writeString(_id);
+    public void setUnreadCount(int unreadCount) {
+        this.unreadCount = unreadCount;
+    }
+
+    public ArrayList<HashMap<String, String>> getUsersList() {
+        return usersList;
+    }
+
+    public void setUsersList(ArrayList<HashMap<String, String>> usersList) {
+        this.usersList = usersList;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
     }
 }
 

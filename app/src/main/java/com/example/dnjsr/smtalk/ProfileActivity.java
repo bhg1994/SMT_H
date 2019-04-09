@@ -22,6 +22,7 @@ import com.example.dnjsr.smtalk.globalVariables.ServerURL;
 
 import com.example.dnjsr.smtalk.info.UserInfo;
 import com.example.dnjsr.smtalk.result.JoinResult;
+import com.example.dnjsr.smtalk.userInfoUpdate.RoomCreate;
 import com.example.dnjsr.smtalk.userInfoUpdate.RoomsListCall;
 import com.example.dnjsr.smtalk.userInfoUpdate.UserInfoUpdate;
 
@@ -85,9 +86,9 @@ public class ProfileActivity extends AppCompatActivity {
         profileactivity_button_chatCreate.setOnClickListener(new View.OnClickListener() {               //image눌러 화면이동
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(v.getContext(),ChatRoomActivity.class);
-
+                Intent intent = new Intent(ProfileActivity.this,ChatRoomActivity.class);
+                RoomCreate roomCreate = new RoomCreate();
+                roomCreate.createRoom(CurrentUserInfo.getUser().getUserInfo().get_id(),SelectedUserInfo.getUser().getUserInfo().get_id(),intent,ProfileActivity.this);
             }
         });
 

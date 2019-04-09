@@ -1,5 +1,6 @@
 package com.example.dnjsr.smtalk.api;
 
+import com.example.dnjsr.smtalk.result.CreateRoomResult;
 import com.example.dnjsr.smtalk.result.FriendListCallResult;
 import com.example.dnjsr.smtalk.result.IdCheckResult;
 import com.example.dnjsr.smtalk.result.JoinResult;
@@ -60,5 +61,12 @@ public interface RetrofitApi {
     @FormUrlEncoded
     @POST("/room/list")
     Call<RoomListCallResult> post_idForRoomList(@FieldMap HashMap<String,String> map);
+
+    //create room
+    @FormUrlEncoded
+    @POST("/room")
+    Call<CreateRoomResult> createRoom(@FieldMap HashMap<String,String> map);
+
+
 
 }
