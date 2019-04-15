@@ -13,12 +13,14 @@
 
     <TextView
         android:fontFamily="@font/baeminfont"
-        android:text="대화방이름"
+        android:text="대화명"
         android:layout_marginLeft="2dp"
         android:id="@+id/chatroomitem_textview_chatroomname"
         android:layout_toRightOf="@+id/chatroomitem_imageview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+
 
     <TextView
         android:fontFamily="@font/baeminfont"
@@ -38,7 +40,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+
     <TextView
+        android:id="@+id/chatroomitem_textview_unreadcount"
         android:visibility="invisible"
         android:backgroundTint="#ff0000"
         android:gravity="center"

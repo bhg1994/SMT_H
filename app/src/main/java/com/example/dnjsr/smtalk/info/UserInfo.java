@@ -15,7 +15,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserInfo implements Parcelable{
+public class UserInfo {
     String userId;
     String userPassword;
     String userName;
@@ -26,7 +26,7 @@ public class UserInfo implements Parcelable{
     String profileImg;
     Bitmap image;
     Boolean isChange = false;
-    ArrayList<RoomInfo> roomsList;
+    List<RoomsList> roomsList;
 
     public String getUserId() {
         return userId;
@@ -108,11 +108,11 @@ public class UserInfo implements Parcelable{
         isChange = change;
     }
 
-    public ArrayList<RoomInfo> getRoomsList() {
+    public List<RoomsList> getRoomsList() {
         return roomsList;
     }
 
-    public void setRoomsList(ArrayList<RoomInfo> roomsList) {
+    public void setRoomsList(List<RoomsList> roomsList) {
         this.roomsList = roomsList;
     }
 
@@ -128,53 +128,6 @@ public class UserInfo implements Parcelable{
         this.image = image;
     }
 
-
-    protected UserInfo(Parcel in) {
-        userId = in.readString();
-        userPassword = in.readString();
-        userName = in.readString();
-        profileImgUrl = in.readString();
-        comment = in.readString();
-        _id = in.readString();
-        friendsList = in.createTypedArrayList(UserInfo.CREATOR);
-        profileImg = in.readString();
-        image = in.readParcelable(Bitmap.class.getClassLoader());
-        byte tmpIsChange = in.readByte();
-        isChange = tmpIsChange == 0 ? null : tmpIsChange == 1;
-        roomsList = in.createTypedArrayList(RoomInfo.CREATOR);
-    }
-
-    public static final Creator<UserInfo> CREATOR = new Creator<UserInfo>() {
-        @Override
-        public UserInfo createFromParcel(Parcel in) {
-            return new UserInfo(in);
-        }
-
-        @Override
-        public UserInfo[] newArray(int size) {
-            return new UserInfo[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(userId);
-        dest.writeString(userPassword);
-        dest.writeString(userName);
-        dest.writeString(profileImgUrl);
-        dest.writeString(comment);
-        dest.writeString(_id);
-        dest.writeTypedList(friendsList);
-        dest.writeString(profileImg);
-        dest.writeParcelable(image, flags);
-        dest.writeByte((byte) (isChange == null ? 0 : isChange ? 1 : 2));
-        dest.writeTypedList(roomsList);
-    }
 }
 
 

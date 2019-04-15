@@ -4,12 +4,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 
+import com.example.dnjsr.smtalk.MainActivity;
 import com.example.dnjsr.smtalk.api.RetrofitApi;
+import com.example.dnjsr.smtalk.fragment.ChatFragment;
+import com.example.dnjsr.smtalk.fragment.PeopleFragment;
 import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
+import com.example.dnjsr.smtalk.globalVariables.FriendsInfo;
 import com.example.dnjsr.smtalk.globalVariables.ServerURL;
+import com.example.dnjsr.smtalk.info.RoomInfo;
 import com.example.dnjsr.smtalk.info.UserInfo;
 import com.example.dnjsr.smtalk.result.RoomListCallResult;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import retrofit2.Call;
@@ -20,6 +26,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RoomsListCall {
     String url = ServerURL.getUrl();
+    ChatFragment chatFragment = new ChatFragment();
 
     public void getRoomsList(String _id){
         try {
@@ -40,8 +47,10 @@ public class RoomsListCall {
                                     break;
                                 case 1:
                                     Log.d("12321","room list ok");
-                                    CurrentUserInfo.getUser().getUserInfo().setRoomsList(map.getRoomsList());
-                                    CurrentUserInfo.getUser().getUserInfo().setChange(true);
+                                    //CurrentUserInfo.getUser().getUserInfo().setRoomsList(map.getRoomsList());
+
+                                   // CurrentUserInfo.getUser().getUserInfo().setChange(true);
+
                                     break;
                             }
                         }

@@ -4,12 +4,13 @@ import com.example.dnjsr.smtalk.info.RoomInfo;
 import com.example.dnjsr.smtalk.info.UserInfo;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RoomListCallResult {
 
     int result;
     ArrayList<RoomInfo> roomsList;
-    ArrayList<UserInfo> friendsList;
+    List<List<UserInfo>> usersLists;
 
     public int getResult() {
         return result;
@@ -27,11 +28,13 @@ public class RoomListCallResult {
         this.roomsList = roomsList;
     }
 
-    public ArrayList<UserInfo> getFriendsList() {
-        return friendsList;
+    public List<List<UserInfo>> getFriendsList() {
+        return usersLists;
     }
 
-    public void setFriendsList(ArrayList<UserInfo> friendsList) {
-        this.friendsList = friendsList;
+    public void setFriendsList(List<List<UserInfo>> friendsList) {
+        this.usersLists = friendsList;
     }
+
+
 }

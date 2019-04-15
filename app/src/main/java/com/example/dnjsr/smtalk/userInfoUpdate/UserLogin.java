@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 
 
+import com.example.dnjsr.smtalk.Thread.MyProfileThread;
 import com.example.dnjsr.smtalk.api.RetrofitApi;
 import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
 import com.example.dnjsr.smtalk.globalVariables.IsLogin;
@@ -23,6 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UserLogin {
     String url = ServerURL.getUrl();
+    MyProfileThread myProfileThread = new MyProfileThread();
     public void Login(final String id, final String password , final Intent intent, final Activity activity){
 
         final String strId = id;
@@ -40,6 +42,7 @@ public class UserLogin {
                     retrofitApi.postLoginUserInfo(input).enqueue(new Callback<LoginResult>() {
                         @Override
                         public void onResponse(Call<LoginResult> call, Response<LoginResult> response) {
+
                             if (response.isSuccessful()) {
                                 LoginResult map = response.body();
                                 if (map != null) {
@@ -58,9 +61,9 @@ public class UserLogin {
                                             UserInfo userinfo = map.getUserInfo();
                                             userinfo.setChange(true);
                                             CurrentUserInfo.getUser().setUserInfo(userinfo);
+                                            myProfileThread.ThreadStart();
                                             UserInfo asd = CurrentUserInfo.getUser().getUserInfo();
                                             IsLogin.setIsLogin(true);
-                                            Log.d("12321",asd.get_id());
                                             activity.startActivity(intent);
                                             activity.finish();
                                             break;
@@ -71,6 +74,8 @@ public class UserLogin {
 
                         @Override
                         public void onFailure(Call<LoginResult> call, Throwable t) {
+                            Log.d("123212","Loginconnectfail");
+                            t.printStackTrace();
 
                         }
                     });

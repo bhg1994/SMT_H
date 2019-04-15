@@ -2,6 +2,8 @@ package com.example.dnjsr.smtalk.userInfoUpdate;
 
 import android.app.Activity;
 import android.util.Log;
+
+import com.example.dnjsr.smtalk.MainActivity;
 import com.example.dnjsr.smtalk.api.RetrofitApi;
 import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
 import com.example.dnjsr.smtalk.globalVariables.ServerURL;
@@ -42,7 +44,10 @@ public class UserInfoUpdate {
                                     UserInfo userinfo = map.getUserInfo();
                                     userinfo.setChange(true);
                                     CurrentUserInfo.getUser().setUserInfo(userinfo);
-                                    activity.finish();
+                                    if(!activity.getLocalClassName().equals("MainActivity")) {
+                                        Log.d("12321",activity.getLocalClassName());
+                                        activity.finish();
+                                    }
                                     break;
                             }
                         }

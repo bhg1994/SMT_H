@@ -29,17 +29,21 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.dnjsr.smtalk.Thread.MyProfileThread;
 import com.example.dnjsr.smtalk.api.RetrofitApi;
 import com.example.dnjsr.smtalk.fragment.ChatFragment;
 import com.example.dnjsr.smtalk.fragment.PeopleFragment;
 import com.example.dnjsr.smtalk.fragment.SettingFragment;
 import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
+import com.example.dnjsr.smtalk.globalVariables.FriendsInfo;
 import com.example.dnjsr.smtalk.globalVariables.IsLogin;
 import com.example.dnjsr.smtalk.globalVariables.ServerURL;
 import com.example.dnjsr.smtalk.info.RoomInfo;
 import com.example.dnjsr.smtalk.info.UserInfo;
 
 import com.example.dnjsr.smtalk.result.FriendListCallResult;
+import com.example.dnjsr.smtalk.result.RoomListCallResult;
+import com.example.dnjsr.smtalk.userInfoUpdate.UserInfoUpdate;
 
 
 import java.io.IOException;
@@ -75,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
     ServerURL serverURL = new ServerURL();
     final String currentServer = serverURL.getUrl();
     UserInfo currentUser ;
-
+    List<RoomInfo> roomAdapterList = new ArrayList<>();
 
     @Override
     protected void onResume() {
@@ -84,8 +88,7 @@ public class MainActivity extends AppCompatActivity {
         if(IsLogin.isIsLogin()) {
             if (currentUser.getChange()) {
                 LoadingThread(CurrentUserInfo.getUser().getUserInfo());
-                currentUser.setChange(false);
-                //Log.d("12321","onresume");
+                getRoomsList(CurrentUserInfo.getUser().getUserInfo().get_id());
             }
         }
     }
@@ -111,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         switch(item.getItemId()){
             case R.id.item_newfriend:
                 getSupportFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,peopleFragment).commit();
@@ -118,9 +122,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.item_newroom:
-                DialogFragment roomDialogFragmnet = new RoomDialogFragment();
+                chatFragment.setRoomAdapterList(roomAdapterList);
+                /*DialogFragment roomDialogFragmnet = new RoomDialogFragment();
                 roomDialogFragmnet.setCancelable(false);
-                roomDialogFragmnet.show(getSupportFragmentManager(),"roomdialogfragment");
+                roomDialogFragmnet.show(getSupportFragmentManager(),"roomdialogfragment");*/
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -161,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(Color.parseColor("#2f2f30"));
         }
 
-        chatFragment.setRoomAdapterList(roomInfos);                                                                     //chat fragment로 roominfos객체리스트 전달
         peopleFragment.setUserInfos(userInfos);                                                                        //people fragment로 userinfos객체리스트 전달
 
         getSupportFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,peopleFragment).commit();  //people fragment로 초기화
@@ -248,11 +252,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void LoadingThread(final UserInfo userinfo) {
 
-
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
+
                     userInfos.clear();
                     HashMap<String, String> input = new HashMap<>();
                     input.put("_id", userinfo.get_id());
@@ -294,6 +298,8 @@ public class MainActivity extends AppCompatActivity {
                                                         final Bitmap bm = BitmapFactory.decodeStream(inputStream);
                                                         userInfo.setImage(bm);
                                                         userInfos.add(userInfo);
+                                                        FriendsInfo.getFriendsInfo().put(userInfo.get_id(),userInfo);
+                                                        Log.d("12321","fl ok");
                                                     }
                                                     handler.sendEmptyMessage(0);
                                                 }
@@ -317,6 +323,46 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         thread.start();
+    }
+
+    public void setRoomInfos(List<RoomInfo> roomInfos){
+        chatFragment.setRoomAdapterList(roomInfos);
+    }
+
+    public void getRoomsList(String _id){
+        try {
+            HashMap<String, String> input = new HashMap<>();
+            input.put("_id", _id);
+            Retrofit retrofit = new Retrofit.Builder().baseUrl(ServerURL.getUrl())
+                    .addConverterFactory(GsonConverterFactory.create()).build();
+            RetrofitApi retrofitApi = retrofit.create(RetrofitApi.class);
+            retrofitApi.post_idForRoomList(input).enqueue(new Callback<RoomListCallResult>() {
+                @Override
+                public void onResponse(Call<RoomListCallResult> call, Response<RoomListCallResult> response) {
+                    if (response.isSuccessful()) {
+                        RoomListCallResult map = response.body();
+                        if (map != null) {
+                            switch (map.getResult()) {
+                                case 0:
+                                    Log.d("12321","room listr fail");
+                                    break;
+                                case 1:
+                                    Log.d("12321","room list ok");
+                                    setRoomInfos(map.getRoomsList());
+                                    Log.d("12321","room set at retrofit");
+                                    break;
+                            }
+                        }
+                    }
+                }
+                @Override
+                public void onFailure(Call<RoomListCallResult> call, Throwable t) {
+                    Log.d("12321","fail to connect :  roomlist");
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }

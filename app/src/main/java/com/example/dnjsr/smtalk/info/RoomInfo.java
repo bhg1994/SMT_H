@@ -7,46 +7,35 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
-public class RoomInfo implements Parcelable {
+public class RoomInfo  {
+    String roomName;
+    String lastChat;
     int unreadCount;
-    ArrayList<HashMap<String,String>> usersList;
+    List<UserInfo> usersList;
     String _id;
 
-    public RoomInfo(int unreadCount, ArrayList<HashMap<String, String>> usersList, String _id) {
+    public RoomInfo(String roomName, int unreadCount) {
+        this.roomName = roomName;
         this.unreadCount = unreadCount;
-        this.usersList = usersList;
-        this._id = _id;
     }
 
-
-    protected RoomInfo(Parcel in) {
-        unreadCount = in.readInt();
-        _id = in.readString();
+    public String getLastChat() {
+        return lastChat;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(unreadCount);
-        dest.writeString(_id);
+    public void setLastChat(String lastChat) {
+        this.lastChat = lastChat;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public String getRoomName() {
+        return roomName;
     }
 
-    public static final Creator<RoomInfo> CREATOR = new Creator<RoomInfo>() {
-        @Override
-        public RoomInfo createFromParcel(Parcel in) {
-            return new RoomInfo(in);
-        }
-
-        @Override
-        public RoomInfo[] newArray(int size) {
-            return new RoomInfo[size];
-        }
-    };
+    public void setRoomName(String roomName) {
+        this.roomName = roomName;
+    }
 
     public int getUnreadCount() {
         return unreadCount;
@@ -56,11 +45,11 @@ public class RoomInfo implements Parcelable {
         this.unreadCount = unreadCount;
     }
 
-    public ArrayList<HashMap<String, String>> getUsersList() {
+    public List<UserInfo> getUsersList() {
         return usersList;
     }
 
-    public void setUsersList(ArrayList<HashMap<String, String>> usersList) {
+    public void setUsersList(List<UserInfo> usersList) {
         this.usersList = usersList;
     }
 

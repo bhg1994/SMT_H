@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.dnjsr.smtalk.Tool.Tool;
 import com.example.dnjsr.smtalk.api.RetrofitApi;
 
 import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
@@ -23,7 +24,6 @@ import com.example.dnjsr.smtalk.globalVariables.ServerURL;
 import com.example.dnjsr.smtalk.info.UserInfo;
 import com.example.dnjsr.smtalk.result.JoinResult;
 import com.example.dnjsr.smtalk.userInfoUpdate.RoomCreate;
-import com.example.dnjsr.smtalk.userInfoUpdate.RoomsListCall;
 import com.example.dnjsr.smtalk.userInfoUpdate.UserInfoUpdate;
 
 import java.util.HashMap;
@@ -44,7 +44,8 @@ public class ProfileActivity extends AppCompatActivity {
     UserInfo currentUser = CurrentUserInfo.getUser().getUserInfo();
     UserInfoUpdate userInfoUpdate = new UserInfoUpdate();
     boolean isFriend = false;
-
+    Boolean isMe = false;
+    Tool tool = new Tool();
 
 
     @Override
@@ -52,11 +53,14 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(Color.parseColor("#2f2f30"));
         }
 
         final UserInfo userinfo = SelectedUserInfo.getUser().getUserInfo();
+
 
         profileactivity_imageview_profileimage = findViewById(R.id.profileactivity_imageview_profileimage);
         profileactivity_textview_username = findViewById(R.id.profileactivity_textview_username);
@@ -68,6 +72,12 @@ public class ProfileActivity extends AppCompatActivity {
         profileactivity_imageview_profileimage.setImageBitmap(userinfo.getImage());
         profileactivity_textview_username.setText(userinfo.getUserName());
         profileactivity_textview_usermessage.setText(userinfo.getComment());
+
+        if(SelectedUserInfo.getUser().getUserInfo().equals(CurrentUserInfo.getUser().getUserInfo())){
+            isMe = true;
+            profileactivity_button_chatCreate.setText("프로필 수정");
+            profileactivity_button_friendAdd.setVisibility(View.GONE);
+        }
 
         for (int i=0; i<currentUser.getFriendsList().size();i++){
             if(currentUser.getFriendsList().get(i).get_id().equals(userinfo.get_id())){
@@ -86,16 +96,25 @@ public class ProfileActivity extends AppCompatActivity {
         profileactivity_button_chatCreate.setOnClickListener(new View.OnClickListener() {               //image눌러 화면이동
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ProfileActivity.this,ChatRoomActivity.class);
-                RoomCreate roomCreate = new RoomCreate();
-                roomCreate.createRoom(CurrentUserInfo.getUser().getUserInfo().get_id(),SelectedUserInfo.getUser().getUserInfo().get_id(),intent,ProfileActivity.this);
+                Intent intentToCatRoom = new Intent(ProfileActivity.this,ChatRoomActivity.class);
+                Intent intentToProfileModify = new Intent(ProfileActivity.this, ProfileModifyActivity.class);
+                if(isMe){
+                    startActivity(intentToProfileModify);
+                }
+                else {
+                    RoomCreate roomCreate = new RoomCreate();
+                    roomCreate.createRoom(tool.getRoomIdBy_Id(SelectedUserInfo.getUser().getUserInfo().get_id()),CurrentUserInfo.getUser().getUserInfo().get_id(), SelectedUserInfo.getUser().getUserInfo().get_id(), intentToCatRoom, ProfileActivity.this);
+
+                }
             }
         });
 
-        if(isFriend)
+        if (isFriend)
             profileactivity_button_friendAdd.setText("친구 삭제");
-        else
+        else{
+            profileactivity_button_chatCreate.setVisibility(View.GONE);
             profileactivity_button_friendAdd.setText("친구 추가");
+        }
 
         profileactivity_button_friendAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,7 +185,6 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 }
             }
-
             @Override
             public void onFailure(Call<JoinResult> call, Throwable t) {
 

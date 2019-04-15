@@ -18,10 +18,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.dnjsr.smtalk.MainActivity;
 import com.example.dnjsr.smtalk.ProfileActivity;
 import com.example.dnjsr.smtalk.R;
+import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
+import com.example.dnjsr.smtalk.globalVariables.FriendsInfo;
 import com.example.dnjsr.smtalk.globalVariables.SelectedUserInfo;
 import com.example.dnjsr.smtalk.globalVariables.ServerURL;
 import com.example.dnjsr.smtalk.info.UserInfo;
@@ -46,8 +50,17 @@ public class PeopleFragment extends Fragment {
     private TextView peoplefragment_textview_friendlist;
     private PeopleFragmentRecyclerViewAdapter peopleFragmentRecyclerViewAdapter;
 
+    private RelativeLayout peopleFragment_relativelayout;
+
+    private ImageView peoplefragment_imageview_myprofile;
+    private TextView peoplefragment_textview_myname;
+    private TextView peoplefragment_textview_mycomment;
+
     public void dataChange(ArrayList<UserInfo> userInfos){
         peopleFragmentRecyclerViewAdapter.filterList(userInfos);
+    }
+    public void setPeoplefragment_imageview_myprofile(Bitmap myprofile) {
+        this.peoplefragment_imageview_myprofile.setImageBitmap(myprofile);
     }
 
 
@@ -61,6 +74,23 @@ public class PeopleFragment extends Fragment {
         peoplefragment_imageview_search = view.findViewById(R.id.peoplefragment_imageview_search);
         peoplefragment_edittext_search = view.findViewById(R.id.peoplefragment_edittext_search);
         peoplefragment_textview_friendlist = view.findViewById(R.id.peoplefragment_textview_friendlist);
+        peoplefragment_imageview_myprofile = view.findViewById(R.id.peoplefragment_imageview_myprofile);
+        peoplefragment_textview_myname = view.findViewById(R.id.peoplefragment_textview_myname);
+        peoplefragment_textview_mycomment = view.findViewById(R.id.peoplefragment_textview_mycomment);
+        peopleFragment_relativelayout = view.findViewById(R.id.peoplefragment_relativelayout);
+
+        peoplefragment_imageview_myprofile.setImageBitmap(CurrentUserInfo.getUser().getUserInfo().getImage());
+        peoplefragment_textview_myname.setText(CurrentUserInfo.getUser().getUserInfo().getUserName());
+        peoplefragment_textview_mycomment.setText(CurrentUserInfo.getUser().getUserInfo().getComment());
+
+        peopleFragment_relativelayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SelectedUserInfo.getUser().setUserInfo(CurrentUserInfo.getUser().getUserInfo());
+                Intent intent = new Intent(getContext(),ProfileActivity.class);
+                startActivity(intent);
+            }
+        });
 
         peoplefragment_edittext_search.addTextChangedListener(new TextWatcher() {
             @Override
@@ -112,10 +142,10 @@ public class PeopleFragment extends Fragment {
 
 
             adapterList = new ArrayList<UserInfo>();                                    //filtering된 친구목록
-
-            for(UserInfo userInfo : userInfos){
+            adapterList = userInfos;
+            /*for(UserInfo userInfo : userInfos){
                 adapterList.add(userInfo);
-            }
+            }*/
             peoplefragment_textview_friendlist.setText("친구 "+ adapterList.size());
         }
 

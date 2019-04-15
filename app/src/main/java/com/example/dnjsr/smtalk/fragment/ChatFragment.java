@@ -19,37 +19,42 @@ import android.widget.TextView;
 
 import com.example.dnjsr.smtalk.ChatRoomActivity;
 import com.example.dnjsr.smtalk.R;
+import com.example.dnjsr.smtalk.Tool.Tool;
+import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
+import com.example.dnjsr.smtalk.globalVariables.FriendsInfo;
+import com.example.dnjsr.smtalk.globalVariables.SelectedRoomInfo;
+import com.example.dnjsr.smtalk.globalVariables.SelectedUserInfo;
 import com.example.dnjsr.smtalk.info.RoomInfo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.zip.Inflater;
 
 public class ChatFragment extends android.support.v4.app.Fragment {
-    private ChatFragmentRecyclerViewAdapter chatFragmentRecyclerViewAdapter;
+
     private RecyclerView fragment_chat_recyclerview;
 
-    List<RoomInfo> roomAdapterList = new ArrayList<>();
+    List<RoomInfo> roomAdapterList =new ArrayList<>();
 
-    public List<RoomInfo> getRoomAdapterList() {
-        return roomAdapterList;
+    public ChatFragmentRecyclerViewAdapter chatFragmentRecyclerViewAdapter= new ChatFragmentRecyclerViewAdapter(roomAdapterList);
+
+    public void setRoomAdapterList(List<RoomInfo> roomsList) {
+        Log.d("12321",Integer.toString(roomsList.size())+" before set");
+        chatFragmentRecyclerViewAdapter.setItems(roomsList);
+        Log.d("12321",Integer.toString(roomsList.size())+" after set");
     }
 
-    public void setRoomAdapterList(List<RoomInfo> roomAdapterList) {
-        this.roomAdapterList = roomAdapterList;
-    }
 
-    /*  Bundle recive_bundle = getArguments();
-        RoomInfo roominfo = recive_bundle.getParcelable("roominfo");
-    */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat,container,false);
+
         fragment_chat_recyclerview = view.findViewById(R.id.chatfragment_recyclerview);
         fragment_chat_recyclerview.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
-        chatFragmentRecyclerViewAdapter = new ChatFragmentRecyclerViewAdapter();
         fragment_chat_recyclerview.setAdapter(chatFragmentRecyclerViewAdapter);
+
 
         return view;
     }
@@ -57,9 +62,12 @@ public class ChatFragment extends android.support.v4.app.Fragment {
 
     class ChatFragmentRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
+        List<RoomInfo> items ;
 
-        public ChatFragmentRecyclerViewAdapter() {
 
+        public ChatFragmentRecyclerViewAdapter(List<RoomInfo> roomInfoList) {
+            items = roomInfoList;
+            Log.d("12321",Integer.toString(items.size())+" chatFRVA");
         }
 
         @NonNull
@@ -71,37 +79,67 @@ public class ChatFragment extends android.support.v4.app.Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int i) {
-            ((CustomViewHolder)viewHolder).chatroomitem_imageview.setImageResource(R.drawable.icon_account);
-            ((CustomViewHolder)viewHolder).chatroomitem_textview_chatroomname.setText(roomAdapterList.get(i).getUsersList().toString());
+            Tool tool = new Tool();
 
-            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(),ChatRoomActivity.class);
-                    intent.putExtra("roominfo",roomAdapterList.get(i));
-                    startActivity(intent);
+            Log.d("12321", Integer.toString(items.size())+" view holder1");
+            if(items.size()>0) {
+                Log.d("12321", Integer.toString(items.size())+" view holder2");
+                //String _id = "5cb4518d7c08cb04e1aeb60c";
+                //String _id2 = items.get(i).getUsersList().get(1).get_id();
+                String _id = tool.getOther_Id(items.get(i));
+
+                ((CustomViewHolder)viewHolder).chatroomitem_imageview.setImageBitmap(FriendsInfo.getFriendsInfo().get(_id).getImage());
+                ((CustomViewHolder)viewHolder).chatroomitem_textview_chatroomname.setText(FriendsInfo.getFriendsInfo().get(_id).getUserName());
+                ((CustomViewHolder)viewHolder).chatroomitem_textview_chatroomlastmessagetime.setText("마지막 메세지 시간 구현 예정");
+                ((CustomViewHolder)viewHolder).chatroomitem_textview_chatroomlastmessage.setText("마지막 메세지 구현 예정");
+                //((CustomViewHolder)viewHolder).chatroomitem_textview_chatroomlastmessage.setText(items.get(i).getLastChat());
+
+                if(items.get(i).getUnreadCount()!=0) {
+                    ((CustomViewHolder) viewHolder).chatroomitem_textview_unreadcount.setVisibility(View.VISIBLE);
+                    ((CustomViewHolder) viewHolder).chatroomitem_textview_unreadcount.setText(Integer.toString(items.get(i).getUnreadCount()));
                 }
-            });
+            }
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String _id = "5cb4518d7c08cb04e1aeb60c";
+                        Log.d("12321","onclick");
+                        SelectedRoomInfo.setSelectedRoomInfo(items.get(i));
+                        SelectedUserInfo.getUser().setUserInfo(FriendsInfo.getFriendsInfo().get(_id));
+                        Intent intent = new Intent(v.getContext(), ChatRoomActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
         }
 
         @Override
         public int getItemCount() {
-            return roomAdapterList.size();
+            return items.size();
         }
+
+        public void setItems(List<RoomInfo> roomInfoList){
+            items = roomInfoList;
+            Log.d("12321",Integer.toString(items.size())+" setitems");
+            notifyDataSetChanged();
+        }
+
+
 
         private class CustomViewHolder extends RecyclerView.ViewHolder {
             private ImageView chatroomitem_imageview;
             private TextView chatroomitem_textview_chatroomname;
-            private TextView chatroomitem_textviewoomnumber;
             private TextView chatroomitem_textview_chatroomlastmessage;
             private TextView chatroomitem_textview_chatroomlastmessagetime;
+            private TextView chatroomitem_textview_unreadcount;
+
             public CustomViewHolder(View view) {
                 super(view);
                 chatroomitem_imageview = view.findViewById(R.id.chatroomitem_imageview);
                 chatroomitem_textview_chatroomname = view.findViewById(R.id.chatroomitem_textview_chatroomname);
-
                 chatroomitem_textview_chatroomlastmessage = view.findViewById(R.id.chatroomitem_textview_chatroomlastmessage);
                 chatroomitem_textview_chatroomlastmessagetime = view.findViewById(R.id.chatroomitem_textview_chatroomlastmessagetime);
+                chatroomitem_textview_unreadcount = view.findViewById(R.id.chatroomitem_textview_unreadcount);
             }
         }
     }

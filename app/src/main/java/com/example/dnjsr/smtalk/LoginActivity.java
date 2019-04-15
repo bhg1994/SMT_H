@@ -43,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "아이디 또는 비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
                 }
                 else{
+                    Log.d("12321", "12321");
                     UserLogin userLogin = new UserLogin();
                     userLogin.Login(id.getText().toString(),password.getText().toString(),new Intent(LoginActivity.this,MainActivity.class),LoginActivity.this);
 
