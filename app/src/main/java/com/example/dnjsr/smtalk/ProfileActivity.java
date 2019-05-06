@@ -22,7 +22,7 @@ import com.example.dnjsr.smtalk.globalVariables.SelectedUserInfo;
 import com.example.dnjsr.smtalk.globalVariables.ServerURL;
 
 import com.example.dnjsr.smtalk.info.UserInfo;
-import com.example.dnjsr.smtalk.result.JoinResult;
+import com.example.dnjsr.smtalk.result.ResultCode;
 import com.example.dnjsr.smtalk.userInfoUpdate.RoomCreate;
 import com.example.dnjsr.smtalk.userInfoUpdate.UserInfoUpdate;
 
@@ -111,7 +111,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         if (isFriend)
             profileactivity_button_friendAdd.setText("친구 삭제");
-        else{
+        else if(!isMe){
             profileactivity_button_chatCreate.setVisibility(View.GONE);
             profileactivity_button_friendAdd.setText("친구 추가");
         }
@@ -139,11 +139,11 @@ public class ProfileActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
         RetrofitApi retrofitApi = retrofit.create(RetrofitApi.class);
-        retrofitApi.addFriend(input).enqueue(new Callback<JoinResult>() {
+        retrofitApi.addFriend(input).enqueue(new Callback<ResultCode>() {
             @Override
-            public void onResponse(Call<JoinResult> call, Response<JoinResult> response) {
+            public void onResponse(Call<ResultCode> call, Response<ResultCode> response) {
                 if (response.isSuccessful()) {
-                    JoinResult searchResult = response.body();
+                    ResultCode searchResult = response.body();
                     switch (searchResult.getResult()) {
                         case 0:
                             Log.d("test123","FAfail");
@@ -156,7 +156,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<JoinResult> call, Throwable t) {
+            public void onFailure(Call<ResultCode> call, Throwable t) {
 
             }
         });
@@ -170,11 +170,11 @@ public class ProfileActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
         RetrofitApi retrofitApi = retrofit.create(RetrofitApi.class);
-        retrofitApi.deleteFriend(input).enqueue(new Callback<JoinResult>() {
+        retrofitApi.deleteFriend(input).enqueue(new Callback<ResultCode>() {
             @Override
-            public void onResponse(Call<JoinResult> call, Response<JoinResult> response) {
+            public void onResponse(Call<ResultCode> call, Response<ResultCode> response) {
                 if (response.isSuccessful()) {
-                    JoinResult result = response.body();
+                    ResultCode result = response.body();
                     switch (result.getResult()) {
                         case 0:
                             Log.d("test123","FDfail");
@@ -186,7 +186,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             }
             @Override
-            public void onFailure(Call<JoinResult> call, Throwable t) {
+            public void onFailure(Call<ResultCode> call, Throwable t) {
 
             }
         });

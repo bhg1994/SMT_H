@@ -4,15 +4,34 @@ import java.util.Date;
 
 public class ChatObject {
     Date createAt;
-    String user;
+    String userId;
     String chat;
-    String room;
+    String roomId;
+    UserInfo user;
+    RoomInfo room;
+
+    public RoomInfo getRoom() {
+        return room;
+    }
+
+    public void setRoom(RoomInfo room) {
+        this.room = room;
+    }
+
     int unreadCount;
 
-    public ChatObject(Date createAt, String user, String chat, String room, int unreadCount) {
-        this.createAt = createAt;
+    public UserInfo getUser() {
+        return user;
+    }
+
+    public void setUser(UserInfo user) {
         this.user = user;
+    }
+
+    public ChatObject(Date createAt, String chat, UserInfo user, RoomInfo room, int unreadCount) {
+        this.createAt = createAt;
         this.chat = chat;
+        this.user = user;
         this.room = room;
         this.unreadCount = unreadCount;
     }
@@ -25,12 +44,12 @@ public class ChatObject {
         this.createAt = createAt;
     }
 
-    public String getUser() {
-        return user;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setUserId(String user) {
+        this.userId = user;
     }
 
     public String getChat() {
@@ -41,12 +60,12 @@ public class ChatObject {
         this.chat = chat;
     }
 
-    public String getRoom() {
-        return room;
+    public String getRoomId() {
+        return roomId;
     }
 
-    public void setRoom(String room) {
-        this.room = room;
+    public void setRoomId(String roomId) {
+        this.roomId = roomId;
     }
 
     public int getUnreadCount() {

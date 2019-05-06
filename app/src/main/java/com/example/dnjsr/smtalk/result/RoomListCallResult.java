@@ -28,13 +28,11 @@ public class RoomListCallResult {
         this.roomsList = roomsList;
     }
 
-    public List<List<UserInfo>> getFriendsList() {
+    public List<List<UserInfo>> getUsersLists() {
         return usersLists;
     }
 
-    public void setFriendsList(List<List<UserInfo>> friendsList) {
-        this.usersLists = friendsList;
+    public void setUsersLists(List<List<UserInfo>> usersLists) {
+        this.usersLists = usersLists;
     }
-
-
 }

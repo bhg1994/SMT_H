@@ -2,7 +2,9 @@ package com.example.dnjsr.smtalk.fragment;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.Image;
+import android.mtp.MtpConstants;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,20 +22,32 @@ import android.widget.TextView;
 import com.example.dnjsr.smtalk.ChatRoomActivity;
 import com.example.dnjsr.smtalk.R;
 import com.example.dnjsr.smtalk.Tool.Tool;
+import com.example.dnjsr.smtalk.globalVariables.AllRoomUser;
 import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
 import com.example.dnjsr.smtalk.globalVariables.FriendsInfo;
+import com.example.dnjsr.smtalk.globalVariables.MySocketManager;
 import com.example.dnjsr.smtalk.globalVariables.SelectedRoomInfo;
 import com.example.dnjsr.smtalk.globalVariables.SelectedUserInfo;
+import com.example.dnjsr.smtalk.globalVariables.ServerURL;
 import com.example.dnjsr.smtalk.info.RoomInfo;
 
+import org.json.JSONObject;
+
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.zip.Inflater;
 
+import io.socket.client.Manager;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+
 public class ChatFragment extends android.support.v4.app.Fragment {
 
     private RecyclerView fragment_chat_recyclerview;
+    Socket socket;
+    String url = ServerURL.getUrl();
 
     List<RoomInfo> roomAdapterList =new ArrayList<>();
 
@@ -45,6 +59,12 @@ public class ChatFragment extends android.support.v4.app.Fragment {
         Log.d("12321",Integer.toString(roomsList.size())+" after set");
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        socket.disconnect();
+        Log.d("12321","소켓 연결 해제");
+    }
 
     @Nullable
     @Override
@@ -54,6 +74,32 @@ public class ChatFragment extends android.support.v4.app.Fragment {
         fragment_chat_recyclerview = view.findViewById(R.id.chatfragment_recyclerview);
         fragment_chat_recyclerview.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         fragment_chat_recyclerview.setAdapter(chatFragmentRecyclerViewAdapter);
+
+        try {
+            Manager manager = new Manager(new URI(url));
+            MySocketManager.setManager(manager);
+
+            socket = MySocketManager.getManager().socket("/room");
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
+        socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("_id", CurrentUserInfo.getUser().getUserInfo().get_id());
+                    //HashMap object = new HashMap();
+                    socket.emit("init",obj);
+                }catch (Exception e){
+
+                }
+            }
+        });
+
+        socket.connect();
 
 
         return view;
@@ -85,11 +131,21 @@ public class ChatFragment extends android.support.v4.app.Fragment {
             if(items.size()>0) {
                 Log.d("12321", Integer.toString(items.size())+" view holder2");
                 //String _id = "5cb4518d7c08cb04e1aeb60c";
-                //String _id2 = items.get(i).getUsersList().get(1).get_id();
-                String _id = tool.getOther_Id(items.get(i));
+                //String _id = items.get(i).getUsersList().get(1).get_id();
+                //
+                HashMap a = AllRoomUser.getAllRoomUsers();
+                String roomName = "그룹톡";
+                Bitmap roomImg = CurrentUserInfo.getGroupImage();
+                if(items.get(i).getUsersList().size()<3){
+                    String _id = tool.getOther_Id(items.get(i));
+                    String aa = FriendsInfo.getFriendsInfo().get(_id).getUserName();
+                    roomName = AllRoomUser.getAllRoomUsers().get(_id).getUserName();
+                    roomImg = AllRoomUser.getAllRoomUsers().get(_id).getImage();
+                }
 
-                ((CustomViewHolder)viewHolder).chatroomitem_imageview.setImageBitmap(FriendsInfo.getFriendsInfo().get(_id).getImage());
-                ((CustomViewHolder)viewHolder).chatroomitem_textview_chatroomname.setText(FriendsInfo.getFriendsInfo().get(_id).getUserName());
+
+                ((CustomViewHolder)viewHolder).chatroomitem_imageview.setImageBitmap(roomImg);
+                ((CustomViewHolder)viewHolder).chatroomitem_textview_chatroomname.setText(roomName);
                 ((CustomViewHolder)viewHolder).chatroomitem_textview_chatroomlastmessagetime.setText("마지막 메세지 시간 구현 예정");
                 ((CustomViewHolder)viewHolder).chatroomitem_textview_chatroomlastmessage.setText("마지막 메세지 구현 예정");
                 //((CustomViewHolder)viewHolder).chatroomitem_textview_chatroomlastmessage.setText(items.get(i).getLastChat());

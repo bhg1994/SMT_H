@@ -1,9 +1,9 @@
 package com.example.dnjsr.smtalk.result;
 
-public class JoinResult {
+public class ResultCode {
     int result;
 
-    public JoinResult(int result) {
+    public ResultCode(int result) {
         this.result = result;
     }
 

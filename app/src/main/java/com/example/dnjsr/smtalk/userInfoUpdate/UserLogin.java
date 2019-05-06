@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 
 
+import com.example.dnjsr.smtalk.Thread.GroupImageThread;
 import com.example.dnjsr.smtalk.Thread.MyProfileThread;
 import com.example.dnjsr.smtalk.api.RetrofitApi;
 import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
@@ -25,6 +26,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class UserLogin {
     String url = ServerURL.getUrl();
     MyProfileThread myProfileThread = new MyProfileThread();
+    GroupImageThread groupImageThread = new GroupImageThread();
+
     public void Login(final String id, final String password , final Intent intent, final Activity activity){
 
         final String strId = id;
@@ -62,6 +65,7 @@ public class UserLogin {
                                             userinfo.setChange(true);
                                             CurrentUserInfo.getUser().setUserInfo(userinfo);
                                             myProfileThread.ThreadStart();
+                                            groupImageThread.ThreadStart();
                                             UserInfo asd = CurrentUserInfo.getUser().getUserInfo();
                                             IsLogin.setIsLogin(true);
                                             activity.startActivity(intent);

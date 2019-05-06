@@ -22,53 +22,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RoomCreate {
     String url = ServerURL.getUrl();
-    public void enterRoom(final String myid, final String friendId , final String roomId, final Intent intent, final Activity activity){
-
-        try {
-            HashMap<String, String> input = new HashMap<>();
-            input.put("roomId", roomId);
-            input.put("userId", myid);
-            input.put("friendId",friendId);
-
-
-
-            Retrofit retrofit = new Retrofit.Builder().baseUrl(url)
-                    .addConverterFactory(GsonConverterFactory.create()).build();
-            RetrofitApi retrofitApi = retrofit.create(RetrofitApi.class);
-            retrofitApi.createRoom(input).enqueue(new Callback<CreateRoomResult>() {
-                @Override
-                public void onResponse(Call<CreateRoomResult> call, Response<CreateRoomResult> response) {
-                    if (response.isSuccessful()) {
-                        CreateRoomResult map = response.body();
-                        if (map != null) {
-                            switch (map.getResult()) {
-                                case 0:
-                                    Log.d("12321", "fail enter room");
-                                    break;
-                                case 1:
-                                    Log.d("12321", "room enter ok");
-                                    //CurrentUserInfo.getUser().getUserInfo().getRoomsList().add(new RoomsList(map.getNewRoom().get_id(),friendId));
-                                    SelectedRoomInfo.setSelectedRoomInfo(map.getNewRoom());
-                                    activity.startActivity(intent);
-                                    activity.finish();
-                                    break;
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<CreateRoomResult> call, Throwable t) {
-                    Log.d("12321","fail asd enter");
-                    t.printStackTrace();
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-    }
 
     public void createRoom(final String roomId, final String myid, final String friendId , final Intent intent, final Activity activity){
 

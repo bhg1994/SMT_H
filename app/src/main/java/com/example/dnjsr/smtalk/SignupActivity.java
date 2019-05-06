@@ -15,13 +15,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.dnjsr.smtalk.api.RetrofitApi;
 
 import com.example.dnjsr.smtalk.globalVariables.ServerURL;
-import com.example.dnjsr.smtalk.info.UserInfo;
 import com.example.dnjsr.smtalk.pattern.UserIdPattern;
 import com.example.dnjsr.smtalk.result.IdCheckResult;
-import com.example.dnjsr.smtalk.result.JoinResult;
+import com.example.dnjsr.smtalk.result.ResultCode;
 import com.example.dnjsr.smtalk.userInfoUpdate.UserLogin;
 
 import java.util.HashMap;
@@ -40,7 +40,8 @@ public class SignupActivity extends AppCompatActivity {
     private Button signup;
     private TextView signactivity_textview_idcheckmessage;
     private FloatingActionButton signactivity_button_idcheckbutton;
-    UserInfo userInfo;
+    private boolean isChecked = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +89,7 @@ public class SignupActivity extends AppCompatActivity {
                                         case 1:
                                             signactivity_button_idcheckbutton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorCorrect)));
                                             signactivity_textview_idcheckmessage.setText("사용가능한 ID입니다.");
+                                            isChecked = true;
                                             break;
                                     }
                                 }
@@ -98,7 +100,7 @@ public class SignupActivity extends AppCompatActivity {
 
                             }
                         });
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
@@ -106,7 +108,7 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
 
-        password.addTextChangedListener( new TextWatcher() {
+        password.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -120,12 +122,11 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
 
-                if(password.getText().toString().equals(password_check.getText().toString())){
+                if (password.getText().toString().equals(password_check.getText().toString())) {
                     password_check.setTextColor(Color.parseColor("#00ff00"));
                     password.setTextColor(Color.parseColor("#00ff00"));
-                    Log.d("test",password.getText().toString());
-                }
-                else{
+                    Log.d("test", password.getText().toString());
+                } else {
                     password_check.setTextColor(Color.parseColor("#ff0000"));
                     password.setTextColor(Color.parseColor("#ff0000"));
 
@@ -149,11 +150,10 @@ public class SignupActivity extends AppCompatActivity {
                     @Override
                     public void afterTextChanged(Editable s) {
 
-                        if(password.getText().toString().equals(password_check.getText().toString())){
+                        if (password.getText().toString().equals(password_check.getText().toString())) {
                             password_check.setTextColor(Color.parseColor("#00ff00"));
                             password.setTextColor(Color.parseColor("#00ff00"));
-                        }
-                        else{
+                        } else {
                             password_check.setTextColor(Color.parseColor("#ff0000"));
                             password.setTextColor(Color.parseColor("#ff0000"));
 
@@ -164,63 +164,66 @@ public class SignupActivity extends AppCompatActivity {
         );
 
 
-
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if(id.getText().toString().equals("")||name.getText().toString().equals("")||password.getText().toString().equals("")||password_check.getText().toString().equals("")){
+                if (!isChecked) {
+                    Toast.makeText(SignupActivity.this, "아이디 체크 하시오", Toast.LENGTH_SHORT).show();
+                } else if (id.getText().toString().equals("") || name.getText().toString().equals("") || password.getText().toString().equals("") || password_check.getText().toString().equals("")) {
                     Toast.makeText(SignupActivity.this, "모든 항목을 입력해주세요", Toast.LENGTH_SHORT).show();
-                }
-                if(!password.getText().toString().equals(password_check.getText().toString())){
+                } else if (!password.getText().toString().equals(password_check.getText().toString())) {
                     Toast.makeText(SignupActivity.this, "비밀번호가 다릅니다.", Toast.LENGTH_SHORT).show();
-                }
-                try {
-                HashMap<String,String> input = new HashMap<>();
-                input.put("userId",id.getText().toString());
-                input.put("userPassword",password.getText().toString());
-                input.put("userName",name.getText().toString());
+                } else {
+
+                    try {
+                        HashMap<String, String> input = new HashMap<>();
+                        input.put("userId", id.getText().toString());
+                        input.put("userPassword", password.getText().toString());
+                        input.put("userName", name.getText().toString());
 
 
-                    Retrofit retrofit = new Retrofit.Builder().baseUrl(currentSever)
-                            .addConverterFactory(GsonConverterFactory.create()).build();
+                        Retrofit retrofit = new Retrofit.Builder().baseUrl(currentSever)
+                                .addConverterFactory(GsonConverterFactory.create()).build();
 
-                    RetrofitApi retrofitApi = retrofit.create(RetrofitApi.class);
+                        RetrofitApi retrofitApi = retrofit.create(RetrofitApi.class);
 
-                    retrofitApi.postJoinUserInfo(input).enqueue(new Callback<JoinResult>() {
-                        @Override
-                        public void onResponse(Call<JoinResult> call, Response<JoinResult> response) {
-                            if(response.isSuccessful()){
-                                JoinResult map = response.body();
+                        retrofitApi.postJoinUserInfo(input).enqueue(new Callback<ResultCode>() {
+                            @Override
+                            public void onResponse(Call<ResultCode> call, Response<ResultCode> response) {
+                                if (response.isSuccessful()) {
+                                    ResultCode map = response.body();
 
-                                if(map != null){
-                                    switch(map.getResult()){
-                                        case 0:
-                                            Toast.makeText(SignupActivity.this, "존재하는 아이디 입니다. 다른 아이디를 사용해주세요.", Toast.LENGTH_SHORT).show();
-                                            break;
-                                        case 1:
-                                            Toast.makeText(SignupActivity.this, "회원가입 되었습니다.", Toast.LENGTH_SHORT).show(); //아이디 비밀번호 비워둔 Login창
-                                            UserLogin userLogin = new UserLogin();
-                                            userLogin.Login(id.getText().toString(),password.getText().toString(),new Intent(SignupActivity.this,MainActivity.class),SignupActivity.this);
-                                            break;
+                                    if (map != null) {
+                                        switch (map.getResult()) {
+                                            case 0:
+                                                Toast.makeText(SignupActivity.this, "존재하는 아이디 입니다. 다른 아이디를 사용해주세요.", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            case 1:
+                                                Toast.makeText(SignupActivity.this, "회원가입 되었습니다.", Toast.LENGTH_SHORT).show(); //아이디 비밀번호 비워둔 Login창
+                                                UserLogin userLogin = new UserLogin();
+                                                userLogin.Login(id.getText().toString(), password.getText().toString(), new Intent(SignupActivity.this, MainActivity.class), SignupActivity.this);
+                                                break;
+                                        }
                                     }
                                 }
                             }
-                        }
-                        @Override
-                        public void onFailure(Call<JoinResult> call, Throwable t) {
 
-                        }
-                    });
+                            @Override
+                            public void onFailure(Call<ResultCode> call, Throwable t) {
+
+                            }
+                        });
 
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
+
+
             }
         });
     }
-
 
 
 }

@@ -2,8 +2,9 @@ package com.example.dnjsr.smtalk.api;
 
 import com.example.dnjsr.smtalk.result.CreateRoomResult;
 import com.example.dnjsr.smtalk.result.FriendListCallResult;
+import com.example.dnjsr.smtalk.result.GetAllChatResult;
 import com.example.dnjsr.smtalk.result.IdCheckResult;
-import com.example.dnjsr.smtalk.result.JoinResult;
+import com.example.dnjsr.smtalk.result.ResultCode;
 import com.example.dnjsr.smtalk.result.LoginResult;
 import com.example.dnjsr.smtalk.result.RoomListCallResult;
 import com.example.dnjsr.smtalk.result.SearchResult;
@@ -22,12 +23,12 @@ public interface RetrofitApi {
     // friend add
     @FormUrlEncoded
     @POST("/friend")
-    Call<JoinResult> addFriend(@FieldMap HashMap<String,String> map);
+    Call<ResultCode> addFriend(@FieldMap HashMap<String,String> map);
 
     // friend delete
     @FormUrlEncoded
     @HTTP(method = "DELETE", path = "/friend", hasBody = true)
-    Call<JoinResult> deleteFriend(@FieldMap HashMap<String,String> map);
+    Call<ResultCode> deleteFriend(@FieldMap HashMap<String,String> map);
 
     // friend list
     @FormUrlEncoded
@@ -41,7 +42,7 @@ public interface RetrofitApi {
     //join
     @FormUrlEncoded
     @POST("/join")
-    Call<JoinResult> postJoinUserInfo(@FieldMap HashMap<String,String> map);
+    Call<ResultCode> postJoinUserInfo(@FieldMap HashMap<String,String> map);
 
     //login
     @FormUrlEncoded
@@ -66,6 +67,17 @@ public interface RetrofitApi {
     @FormUrlEncoded
     @POST("/room")
     Call<CreateRoomResult> createRoom(@FieldMap HashMap<String,String> map);
+
+    //get all chats by room_id
+    @GET("/chat/list/{roomId}")
+    Call<GetAllChatResult> getAllChats(@Path("roomId") String roomId);
+
+    //create chat
+    @FormUrlEncoded
+    @POST("/chat/newChat")
+    Call<ResultCode> createChat(@FieldMap HashMap<String,String> map);
+
+
 
 
 

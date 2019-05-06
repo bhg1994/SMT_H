@@ -34,6 +34,7 @@ import com.example.dnjsr.smtalk.api.RetrofitApi;
 import com.example.dnjsr.smtalk.fragment.ChatFragment;
 import com.example.dnjsr.smtalk.fragment.PeopleFragment;
 import com.example.dnjsr.smtalk.fragment.SettingFragment;
+import com.example.dnjsr.smtalk.globalVariables.AllRoomUser;
 import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
 import com.example.dnjsr.smtalk.globalVariables.FriendsInfo;
 import com.example.dnjsr.smtalk.globalVariables.IsLogin;
@@ -73,19 +74,19 @@ public class MainActivity extends AppCompatActivity {
     static View dialog_newfriend;
     static String roomname;
     static String membercount;
-    List<UserInfo> userInfos= new ArrayList<>();
+    List<UserInfo> userInfos = new ArrayList<>();
     List<RoomInfo> roomInfos;
     Handler handler;
     ServerURL serverURL = new ServerURL();
     final String currentServer = serverURL.getUrl();
-    UserInfo currentUser ;
+    UserInfo currentUser;
     List<RoomInfo> roomAdapterList = new ArrayList<>();
 
     @Override
     protected void onResume() {
         super.onResume();
         currentUser = CurrentUserInfo.getUser().getUserInfo();
-        if(IsLogin.isIsLogin()) {
+        if (IsLogin.isIsLogin()) {
             if (currentUser.getChange()) {
                 LoadingThread(CurrentUserInfo.getUser().getUserInfo());
                 getRoomsList(CurrentUserInfo.getUser().getUserInfo().get_id());
@@ -96,13 +97,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         inflater = getMenuInflater();
-        inflater.inflate(R.menu.actionbar_menu,menu);
+        inflater.inflate(R.menu.actionbar_menu, menu);
         item_newfriend = menu.findItem(R.id.item_newfriend);
         item_newroom = menu.findItem(R.id.item_newroom);
         item_newroom.setVisible(false);
-        for(int i = 0; i < menu.size(); i++){                                                                                   //optionsmenu icon color change
+        for (int i = 0; i < menu.size(); i++) {                                                                                   //optionsmenu icon color change
             Drawable drawable = menu.getItem(i).getIcon();
-            if(drawable != null) {
+            if (drawable != null) {
                 drawable.mutate();
                 drawable.setColorFilter(getResources().getColor(R.color.colorYellow), PorterDuff.Mode.SRC_ATOP);
             }
@@ -115,9 +116,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.item_newfriend:
-                getSupportFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,peopleFragment).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout, peopleFragment).commit();
                 Intent intent = new Intent(MainActivity.this, SearchActivity.class);
                 startActivity(intent);
                 return true;
@@ -137,14 +138,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d("12321","oncreate1");
+        Log.d("12321", "oncreate1");
 
-        handler = new Handler(){
+        handler = new Handler() {
 
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                if(msg.what == 0) {
+                if (msg.what == 0) {
                     peopleFragment.dataChange((ArrayList<UserInfo>) userInfos);
                 }
             }
@@ -154,8 +155,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         LayoutInflater inflater = getLayoutInflater();
-        dialog_newfriend = inflater.inflate(R.layout.dialog_newfriend,null);
-        dialog_newroom = inflater.inflate(R.layout.dialog_newroom,null);                      //dialog layout inflate
+        dialog_newfriend = inflater.inflate(R.layout.dialog_newfriend, null);
+        dialog_newroom = inflater.inflate(R.layout.dialog_newroom, null);                      //dialog layout inflate
 
         peopleFragment = new PeopleFragment();
         chatFragment = new ChatFragment();
@@ -168,35 +169,35 @@ public class MainActivity extends AppCompatActivity {
 
         peopleFragment.setUserInfos(userInfos);                                                                        //people fragment로 userinfos객체리스트 전달
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,peopleFragment).commit();  //people fragment로 초기화
+        getSupportFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout, peopleFragment).commit();  //people fragment로 초기화
 
         BottomNavigationView mainactivity_bottomnavigationview = findViewById(R.id.mainactivity_bottomnavigationview);
 
         mainactivity_bottomnavigationview.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()){
-                    case R.id.action_people :
+                switch (menuItem.getItemId()) {
+                    case R.id.action_people:
                         actionBar = getSupportActionBar();
                         actionBar.setTitle("친구");
                         item_newfriend.setVisible(true);
                         item_newroom.setVisible(false);
                         //peopleFragment.setUserInfos(userInfos);
-                        getSupportFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,peopleFragment).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout, peopleFragment).commit();
                         return true;
                     case R.id.action_chat:
                         item_newfriend.setVisible(false);
                         item_newroom.setVisible(true);
                         actionBar = getSupportActionBar();
                         actionBar.setTitle("채팅");
-                        getSupportFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,chatFragment).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout, chatFragment).commit();
                         return true;
                     case R.id.action_setting:
                         actionBar = getSupportActionBar();
                         actionBar.setTitle("설정");
                         item_newfriend.setVisible(false);
                         item_newroom.setVisible(false);
-                        getSupportFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,settingFragment).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout, settingFragment).commit();
                         return true;
                 }
                 return false;
@@ -204,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public static class FriendDialogFragment extends DialogFragment{
+    public static class FriendDialogFragment extends DialogFragment {
         @NonNull
         @Override
         public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -227,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public static class RoomDialogFragment extends DialogFragment{
+    public static class RoomDialogFragment extends DialogFragment {
         @NonNull
         @Override
         public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -275,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
                                             Toast.makeText(MainActivity.this, "데이터 베이스 오류입니다.", Toast.LENGTH_SHORT).show();
                                             break;
                                         case 0:
-                                            Toast.makeText(MainActivity.this, "친구없는 "+ userinfo.getUserName() + " 환영합니다!", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(MainActivity.this, "친구없는 " + userinfo.getUserName() + " 환영합니다!", Toast.LENGTH_LONG).show();
                                             break;
                                         case 1:
                                             Thread thread_inner = new Thread(new Runnable() {
@@ -296,21 +297,24 @@ public class MainActivity extends AppCompatActivity {
                                                             e.printStackTrace();
                                                         }
                                                         final Bitmap bm = BitmapFactory.decodeStream(inputStream);
+
                                                         userInfo.setImage(bm);
                                                         userInfos.add(userInfo);
-                                                        FriendsInfo.getFriendsInfo().put(userInfo.get_id(),userInfo);
-                                                        Log.d("12321","fl ok");
+                                                        FriendsInfo.getFriendsInfo().put(userInfo.get_id(), userInfo);
+                                                        Log.d("12321", "fl ok");
                                                     }
                                                     handler.sendEmptyMessage(0);
                                                 }
                                             });
                                             thread_inner.start();
                                             Toast.makeText(MainActivity.this, userinfo.getUserName() + " 환영합니다!", Toast.LENGTH_SHORT).show();
+
                                             break;
                                     }
                                 }
                             }
                         }
+
                         @Override
                         public void onFailure(Call<FriendListCallResult> call, Throwable t) {
 
@@ -325,11 +329,11 @@ public class MainActivity extends AppCompatActivity {
         thread.start();
     }
 
-    public void setRoomInfos(List<RoomInfo> roomInfos){
+    public void setRoomInfos(List<RoomInfo> roomInfos) {
         chatFragment.setRoomAdapterList(roomInfos);
     }
 
-    public void getRoomsList(String _id){
+    public void getRoomsList(String _id) {
         try {
             HashMap<String, String> input = new HashMap<>();
             input.put("_id", _id);
@@ -340,27 +344,53 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<RoomListCallResult> call, Response<RoomListCallResult> response) {
                     if (response.isSuccessful()) {
-                        RoomListCallResult map = response.body();
+                        final RoomListCallResult map = response.body();
                         if (map != null) {
                             switch (map.getResult()) {
                                 case 0:
-                                    Log.d("12321","room listr fail");
+                                    Log.d("12321", "room listr fail");
                                     break;
                                 case 1:
-                                    Log.d("12321","room list ok");
+                                    Log.d("12321", "room list ok");
                                     setRoomInfos(map.getRoomsList());
-                                    Log.d("12321","room set at retrofit");
+                                    Thread thread_inner = new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            for (List<UserInfo> userInfoList : map.getUsersLists()) {
+                                                for (UserInfo userInfo : userInfoList) {
+                                                    URL url = null;
+                                                    try {
+                                                        url = new URL(currentServer + userInfo.getProfileImgUrl());
+                                                    } catch (MalformedURLException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                    InputStream inputStream = null;
+                                                    try {
+                                                        inputStream = url.openStream();
+                                                    } catch (IOException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                    final Bitmap bm = BitmapFactory.decodeStream(inputStream);
+                                                    userInfo.setImage(bm);
+                                                    AllRoomUser.getAllRoomUsers().put(userInfo.get_id(), userInfo);
+                                                }
+                                            }
+                                        }
+                                    });
+                                    thread_inner.start();
+                                    Log.d("12321", "room set at retrofit");
                                     break;
                             }
                         }
                     }
                 }
+
                 @Override
                 public void onFailure(Call<RoomListCallResult> call, Throwable t) {
-                    Log.d("12321","fail to connect :  roomlist");
+                    Log.d("12321", "fail to connect :  roomlist");
                 }
             });
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
