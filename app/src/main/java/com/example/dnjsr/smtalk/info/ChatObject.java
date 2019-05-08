@@ -1,5 +1,7 @@
 package com.example.dnjsr.smtalk.info;
 
+import android.graphics.Bitmap;
+
 import java.util.Date;
 
 public class ChatObject {
@@ -9,6 +11,15 @@ public class ChatObject {
     String roomId;
     UserInfo user;
     RoomInfo room;
+    Bitmap bitmap;
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
+    }
 
     public RoomInfo getRoom() {
         return room;
@@ -34,6 +45,7 @@ public class ChatObject {
         this.user = user;
         this.room = room;
         this.unreadCount = unreadCount;
+        this.bitmap = null;
     }
 
     public Date getCreateAt() {

@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
             if (currentUser.getChange()) {
                 LoadingThread(CurrentUserInfo.getUser().getUserInfo());
                 getRoomsList(CurrentUserInfo.getUser().getUserInfo().get_id());
+                CurrentUserInfo.getUser().getUserInfo().setChange(false);
             }
         }
     }

@@ -18,6 +18,7 @@ import com.example.dnjsr.smtalk.Tool.Tool;
 import com.example.dnjsr.smtalk.api.RetrofitApi;
 
 import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
+import com.example.dnjsr.smtalk.globalVariables.MySocketManager;
 import com.example.dnjsr.smtalk.globalVariables.SelectedUserInfo;
 import com.example.dnjsr.smtalk.globalVariables.ServerURL;
 
@@ -26,8 +27,14 @@ import com.example.dnjsr.smtalk.result.ResultCode;
 import com.example.dnjsr.smtalk.userInfoUpdate.RoomCreate;
 import com.example.dnjsr.smtalk.userInfoUpdate.UserInfoUpdate;
 
+import org.json.JSONObject;
+
+import java.net.URI;
 import java.util.HashMap;
 
+import io.socket.client.Manager;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,6 +53,7 @@ public class ProfileActivity extends AppCompatActivity {
     boolean isFriend = false;
     Boolean isMe = false;
     Tool tool = new Tool();
+    Socket socket;
 
 
     @Override
@@ -102,6 +110,33 @@ public class ProfileActivity extends AppCompatActivity {
                     startActivity(intentToProfileModify);
                 }
                 else {
+                    if(MySocketManager.getManager()==null){
+                        try {
+                            Manager manager = new Manager(new URI(serverUrl));
+                            MySocketManager.setManager(manager);
+
+                            socket = MySocketManager.getManager().socket("/room");
+                        }
+                        catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+                        socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+                            @Override
+                            public void call(Object... args) {
+                                try {
+                                    JSONObject obj = new JSONObject();
+                                    obj.put("_id", CurrentUserInfo.getUser().getUserInfo().get_id());
+                                    //HashMap object = new HashMap();
+                                    socket.emit("init",obj);
+                                }catch (Exception e){
+
+                                }
+                            }
+                        });
+
+                        socket.connect();
+                    }
                     RoomCreate roomCreate = new RoomCreate();
                     roomCreate.createRoom(tool.getRoomIdBy_Id(SelectedUserInfo.getUser().getUserInfo().get_id()),CurrentUserInfo.getUser().getUserInfo().get_id(), SelectedUserInfo.getUser().getUserInfo().get_id(), intentToCatRoom, ProfileActivity.this);
 

@@ -65,7 +65,7 @@ public class RoomCreate {
 
                 @Override
                 public void onFailure(Call<CreateRoomResult> call, Throwable t) {
-                    Log.d("12321","fail asd dasdsaads");
+                    Log.d("12321","fail room create");
                     t.printStackTrace();
                 }
             });

@@ -75,31 +75,33 @@ public class ChatFragment extends android.support.v4.app.Fragment {
         fragment_chat_recyclerview.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         fragment_chat_recyclerview.setAdapter(chatFragmentRecyclerViewAdapter);
 
-        try {
-            Manager manager = new Manager(new URI(url));
-            MySocketManager.setManager(manager);
+        if(MySocketManager.getManager()==null){
+            try {
+                Manager manager = new Manager(new URI(url));
+                MySocketManager.setManager(manager);
 
-            socket = MySocketManager.getManager().socket("/room");
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-
-        socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                try {
-                    JSONObject obj = new JSONObject();
-                    obj.put("_id", CurrentUserInfo.getUser().getUserInfo().get_id());
-                    //HashMap object = new HashMap();
-                    socket.emit("init",obj);
-                }catch (Exception e){
-
-                }
+                socket = MySocketManager.getManager().socket("/room");
             }
-        });
+            catch (Exception e){
+                e.printStackTrace();
+            }
 
-        socket.connect();
+            socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    try {
+                        JSONObject obj = new JSONObject();
+                        obj.put("_id", CurrentUserInfo.getUser().getUserInfo().get_id());
+                        //HashMap object = new HashMap();
+                        socket.emit("init",obj);
+                    }catch (Exception e){
+
+                    }
+                }
+            });
+
+            socket.connect();
+        }
 
 
         return view;
