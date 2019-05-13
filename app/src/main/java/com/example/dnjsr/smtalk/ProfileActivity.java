@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.example.dnjsr.smtalk.Tool.Tool;
 import com.example.dnjsr.smtalk.api.RetrofitApi;
 
+import com.example.dnjsr.smtalk.globalVariables.AllRoomUser;
 import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
 import com.example.dnjsr.smtalk.globalVariables.MySocketManager;
 import com.example.dnjsr.smtalk.globalVariables.SelectedUserInfo;
@@ -138,6 +139,7 @@ public class ProfileActivity extends AppCompatActivity {
                         socket.connect();
                     }
                     RoomCreate roomCreate = new RoomCreate();
+                    AllRoomUser.getAllRoomUsers().put(SelectedUserInfo.getUser().getUserInfo().get_id(),SelectedUserInfo.getUser().getUserInfo());
                     roomCreate.createRoom(tool.getRoomIdBy_Id(SelectedUserInfo.getUser().getUserInfo().get_id()),CurrentUserInfo.getUser().getUserInfo().get_id(), SelectedUserInfo.getUser().getUserInfo().get_id(), intentToCatRoom, ProfileActivity.this);
 
                 }

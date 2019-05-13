@@ -2,6 +2,7 @@ package com.example.dnjsr.smtalk;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -63,6 +64,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity {
+    public static Context mContext;
+
     ActionBar actionBar;
     MenuInflater inflater;
     MenuItem item_newfriend;
@@ -124,10 +127,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.item_newroom:
-                chatFragment.setRoomAdapterList(roomAdapterList);
-                /*DialogFragment roomDialogFragmnet = new RoomDialogFragment();
-                roomDialogFragmnet.setCancelable(false);
-                roomDialogFragmnet.show(getSupportFragmentManager(),"roomdialogfragment");*/
+                Intent intent2 = new Intent(MainActivity.this, GroupRoomCreateActivity.class);
+                startActivity(intent2);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -140,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d("12321", "oncreate1");
+        mContext = this;
 
         handler = new Handler() {
 
@@ -332,6 +334,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void setRoomInfos(List<RoomInfo> roomInfos) {
         chatFragment.setRoomAdapterList(roomInfos);
+    }
+    public List<UserInfo> getUserInfos() {
+        return userInfos;
     }
 
     public void getRoomsList(String _id) {

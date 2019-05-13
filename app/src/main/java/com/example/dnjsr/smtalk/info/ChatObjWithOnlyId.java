@@ -9,6 +9,24 @@ public class ChatObjWithOnlyId {
     String user;
     String room;
     String chat;
+    String type;
+    String imgUrl;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
 
     public int getUnreadCount() {
         return unreadCount;

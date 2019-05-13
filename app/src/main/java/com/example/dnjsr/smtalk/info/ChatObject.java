@@ -12,6 +12,34 @@ public class ChatObject {
     UserInfo user;
     RoomInfo room;
     Bitmap bitmap;
+    String type;
+    String imgUrl;
+    int unreadCount;
+    int index;
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
 
     public Bitmap getBitmap() {
         return bitmap;
@@ -29,7 +57,6 @@ public class ChatObject {
         this.room = room;
     }
 
-    int unreadCount;
 
     public UserInfo getUser() {
         return user;

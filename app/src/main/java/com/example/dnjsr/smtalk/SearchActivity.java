@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,6 +103,7 @@ public class SearchActivity extends AppCompatActivity {
         public SearchActivityRecyclerViewAdapter(ArrayList<UserInfo> items)
         {
             this.items=items;
+            Log.d("12321", Integer.toString(this.items.size())+"tlwkr");
         }
         @NonNull
         @Override
@@ -109,7 +111,7 @@ public class SearchActivity extends AppCompatActivity {
 
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friend, parent, false);
             ViewHolder viewHolder = new ViewHolder(itemView);
-
+            Log.d("12321", Integer.toString(this.items.size())+"oncreate");
             return viewHolder;
         }
 
@@ -122,6 +124,7 @@ public class SearchActivity extends AppCompatActivity {
                 Log.e("에러", "이미지를 불러오지 못 함.", e);
                 bitmap = null;
             }*/
+            Log.d("12321", Integer.toString(this.items.size())+"bindvh");
 
 
             ((ViewHolder)viewHolder).profileImage.setImageBitmap(items.get(position).getImage());

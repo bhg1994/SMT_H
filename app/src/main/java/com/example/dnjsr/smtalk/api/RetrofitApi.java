@@ -10,13 +10,18 @@ import com.example.dnjsr.smtalk.result.RoomListCallResult;
 import com.example.dnjsr.smtalk.result.SearchResult;
 
 import java.util.HashMap;
+import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public interface RetrofitApi {
@@ -68,6 +73,11 @@ public interface RetrofitApi {
     @POST("/room")
     Call<CreateRoomResult> createRoom(@FieldMap HashMap<String,String> map);
 
+    //create room
+    @FormUrlEncoded
+    @POST("/groupRoom")
+    Call<CreateRoomResult> createGroupRoom(@FieldMap HashMap<String, List<String>> list);
+
     //get all chats by room_id
     @GET("/chat/list/{roomId}")
     Call<GetAllChatResult> getAllChats(@Path("roomId") String roomId);
@@ -76,6 +86,11 @@ public interface RetrofitApi {
     @FormUrlEncoded
     @POST("/chat/newChat")
     Call<ResultCode> createChat(@FieldMap HashMap<String,String> map);
+
+    //send photo
+    @Multipart
+    @POST("/chat/img")
+    Call<ResultCode> sendPhoto(@Part("user") RequestBody user, @Part("room") RequestBody room, @Part MultipartBody.Part img);
 
 
 

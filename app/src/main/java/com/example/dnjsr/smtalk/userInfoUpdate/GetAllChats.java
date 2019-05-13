@@ -2,9 +2,12 @@ package com.example.dnjsr.smtalk.userInfoUpdate;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.example.dnjsr.smtalk.ChatRoomActivity;
+import com.example.dnjsr.smtalk.R;
+import com.example.dnjsr.smtalk.Thread.PhotoDownloadThread;
 import com.example.dnjsr.smtalk.api.RetrofitApi;
 import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
 import com.example.dnjsr.smtalk.globalVariables.SelectedRoomInfo;
@@ -23,8 +26,11 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GetAllChats {
+
     String url = ServerURL.getUrl();
-    public void getAllChats(String roomId){
+    PhotoDownloadThread photoDownloadThread = new PhotoDownloadThread();
+    List<ChatObject> chatObjectList =new ArrayList<>();
+    public void getAllChats(String roomId, final Context context){
         Retrofit retrofit = new Retrofit.Builder().baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
@@ -42,7 +48,20 @@ public class GetAllChats {
                                 break;
                             case 1:
                                 Log.d("12321","yes chats");
-                                ChatRoomActivity.setchatsList(map.getChats());
+
+                                int i =0;
+                                for (ChatObject chatObject:map.getChats()) {
+                                    chatObject.setIndex(i);
+                                    chatObjectList.add(chatObject);
+                                    i++;
+                                }
+                                for (ChatObject chatObject:chatObjectList) {
+                                    if(!chatObject.getImgUrl().equals("")){
+                                        photoDownloadThread.ThreadStartForList(chatObject,chatObjectList,(ChatRoomActivity)context);
+                                    }
+                                }
+                                ChatRoomActivity.setchatsList(chatObjectList);
+                                ((ChatRoomActivity)context).handler.sendEmptyMessage(0);
                                 break;
                         }
                     }

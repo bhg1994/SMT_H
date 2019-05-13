@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.dnjsr.smtalk.Thread.PhotoDownloadThread;
 import com.example.dnjsr.smtalk.Tool.Tool;
 import com.example.dnjsr.smtalk.globalVariables.AllRoomUser;
 import com.example.dnjsr.smtalk.globalVariables.CurrentUserInfo;
@@ -35,6 +36,7 @@ import com.example.dnjsr.smtalk.info.ChatObject;
 import com.example.dnjsr.smtalk.info.UserInfo;
 import com.example.dnjsr.smtalk.userInfoUpdate.GetAllChats;
 import com.example.dnjsr.smtalk.userInfoUpdate.NewChatSend;
+import com.example.dnjsr.smtalk.userInfoUpdate.SendPhoto;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -42,6 +44,8 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,23 +56,34 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class ChatRoomActivity extends AppCompatActivity {
-
+    public static Context mContext;
     Socket socket;
-    Handler handler;
+    public Handler handler;
     final static int SELECT_PHOTO = 1;
 
     Emitter.Listener emmiterNewChat = new Emitter.Listener() {
         Gson gson = new Gson();
         ChatObjWithOnlyId newChatObj;
+        ChatObject chatObject;
 
         @Override
         public void call(Object... args) {
             try {
                 JSONObject obj = (JSONObject) args[0];
                 newChatObj = (ChatObjWithOnlyId) gson.fromJson(String.valueOf(obj), ChatObjWithOnlyId.class);
-                ChatObject chatObject = new ChatObject(newChatObj.getCreateAt(), newChatObj.getChat(), AllRoomUser.getAllRoomUsers().get(newChatObj.getUser()), SelectedRoomInfo.getSelectedRoomInfo(), 1);
-                chatObjectList.add(chatObject);
-                handler.sendEmptyMessage(0);
+                if(newChatObj.getType().equals("img")){
+                    chatObject  = new ChatObject(newChatObj.getCreateAt(), "", AllRoomUser.getAllRoomUsers().get(newChatObj.getUser()), SelectedRoomInfo.getSelectedRoomInfo(), 1);
+                    chatObject.setIndex(chatObjectList.size()-1);
+                    chatObject.setImgUrl(newChatObj.getImgUrl());
+                    PhotoDownloadThread photoDownloadThread = new PhotoDownloadThread();
+                    photoDownloadThread.ThreadStart(chatObject,chatObjectList,mContext);
+                }
+                else if (newChatObj.getType().equals("text")){
+                    chatObject = new ChatObject(newChatObj.getCreateAt(), newChatObj.getChat(), AllRoomUser.getAllRoomUsers().get(newChatObj.getUser()), SelectedRoomInfo.getSelectedRoomInfo(), 1);
+                    chatObjectList.add(chatObject);
+                    handler.sendEmptyMessage(0);
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -98,7 +113,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     public static void setchatsList(List<ChatObject> list) {
         chatObjectList = list;
-        chatRoomRecyclerViewAdapter.setItems(chatObjectList);
+        //chatRoomRecyclerViewAdapter.setItems(chatObjectList);
     }
 
     public static void clearchatList() {
@@ -124,6 +139,8 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         Tool tool = new Tool();
 
+        mContext = this;
+
         FloatingActionButton btChat = findViewById(R.id.chatroomactivity_floatingbutton_send);
         FloatingActionButton btPhoto = findViewById(R.id.chatroomactivity_floatingbutton_photo);
         final EditText edtChat = findViewById(R.id.chatroomactivity_edittext_message);
@@ -138,7 +155,9 @@ public class ChatRoomActivity extends AppCompatActivity {
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 if (msg.what == 0) {
-                    setchatsList(chatObjectList);
+                    //setchatsList(chatObjectList);
+                    chatRoomRecyclerViewAdapter.setItems(chatObjectList);
+                    Log.d("12321","handler");
                 }
             }
         };
@@ -184,7 +203,7 @@ public class ChatRoomActivity extends AppCompatActivity {
         });
 
         GetAllChats getAllChats = new GetAllChats();
-        getAllChats.getAllChats(SelectedRoomInfo.getSelectedRoomInfo().get_id());
+        getAllChats.getAllChats(SelectedRoomInfo.getSelectedRoomInfo().get_id(),mContext);
 
 
     }
@@ -203,10 +222,22 @@ public class ChatRoomActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    ChatObject chatObject = new ChatObject(null, "", CurrentUserInfo.getUser().getUserInfo(), SelectedRoomInfo.getSelectedRoomInfo(), 1);
-                    chatObject.setBitmap(bitmap);
-                    chatObjectList.add(chatObject);
-                    handler.sendEmptyMessage(0);
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG,100, byteArrayOutputStream);
+                    byte[] bytes = byteArrayOutputStream.toByteArray();
+                    SendPhoto sendPhoto = new SendPhoto();
+                    sendPhoto.sendPhoto(bytes,CurrentUserInfo.getUser().getUserInfo().get_id(),SelectedRoomInfo.getSelectedRoomInfo().get_id());
+
+
+
+                    try {
+                        File file = File.createTempFile("upload112.png",null,getCacheDir());
+                        //SendPhoto sendPhoto = new SendPhoto();
+                        //sendPhoto.sendPhoto(file,CurrentUserInfo.getUser().getUserInfo().get_id(),SelectedRoomInfo.getSelectedRoomInfo().get_id());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
             }
         }
     }
@@ -252,8 +283,8 @@ public class ChatRoomActivity extends AppCompatActivity {
                 return new CustomViewHolder_My_Photo(view);
             }
             else{
-                view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_photo_send, viewGroup, false);
-                return new CustomViewHolder_My_Photo(view);
+                view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_photo_recive, viewGroup, false);
+                return new CustomViewHolder_Other_Photo(view);
             }
         }
 
@@ -272,7 +303,13 @@ public class ChatRoomActivity extends AppCompatActivity {
                 ((CustomViewHolder_My_Photo) viewHolder).chatBubble_iv_profile.setImageBitmap(items.get(i).getBitmap());
             }
             else {
-                ((CustomViewHolder_My_Photo) viewHolder).chatBubble_iv_profile.setImageBitmap(items.get(i).getBitmap());
+                ((CustomViewHolder_Other_Photo) viewHolder).chatBubble_iv_profile.setImageBitmap(AllRoomUser.getAllRoomUsers().get(items.get(i).getUser().get_id()).getImage());
+                ((CustomViewHolder_Other_Photo) viewHolder).chatBubble_tv_name.setText(AllRoomUser.getAllRoomUsers().get(items.get(i).getUser().get_id()).getUserName());
+                if(items.get(i).getBitmap()==null)
+                    ((CustomViewHolder_Other_Photo) viewHolder).chatBubble_iv_photo.setImageResource(R.drawable.loading_icon);
+                else
+                    ((CustomViewHolder_Other_Photo) viewHolder).chatBubble_iv_photo.setImageBitmap(items.get(i).getBitmap());
+
             }
 
         }
@@ -325,6 +362,20 @@ public class ChatRoomActivity extends AppCompatActivity {
                 super(view);
 
                 chatBubble_iv_profile = view.findViewById(R.id.chatroomitem_imageview_photo);
+
+            }
+
+        }
+        private class CustomViewHolder_Other_Photo extends RecyclerView.ViewHolder {
+            private ImageView chatBubble_iv_profile;
+            private TextView chatBubble_tv_name;
+            private ImageView chatBubble_iv_photo;
+            public CustomViewHolder_Other_Photo(View view) {
+                super(view);
+
+                chatBubble_iv_profile = view.findViewById(R.id.chatroomitem_recive_photo_imageview_profile);
+                chatBubble_tv_name = view.findViewById(R.id.chatroomitem_recive_photo_textview_username);
+                chatBubble_iv_photo = view.findViewById(R.id.chatroomitem_recive_imageview_photo);
 
             }
 

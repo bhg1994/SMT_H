@@ -140,7 +140,7 @@ public class ChatFragment extends android.support.v4.app.Fragment {
                 Bitmap roomImg = CurrentUserInfo.getGroupImage();
                 if(items.get(i).getUsersList().size()<3){
                     String _id = tool.getOther_Id(items.get(i));
-                    String aa = FriendsInfo.getFriendsInfo().get(_id).getUserName();
+                    //String aa = FriendsInfo.getFriendsInfo().get(_id).getUserName();
                     roomName = AllRoomUser.getAllRoomUsers().get(_id).getUserName();
                     roomImg = AllRoomUser.getAllRoomUsers().get(_id).getImage();
                 }
