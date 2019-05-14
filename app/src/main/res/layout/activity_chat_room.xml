@@ -27,11 +27,12 @@
         android:layout_height="wrap_content">
 
         <android.support.design.widget.FloatingActionButton
+            android:layout_gravity="center"
             app:backgroundTint="#000000"
             app:elevation="0dp"
             app:fabSize="mini"
             android:id="@+id/chatroomactivity_floatingbutton_photo"
-            android:src="@drawable/icon_plus"
+            android:src="@drawable/ic_add_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -44,6 +45,7 @@
             android:layout_height="wrap_content" />
 
         <android.support.design.widget.FloatingActionButton
+            android:layout_gravity="center"
             app:backgroundTint="#000000"
             app:elevation="0dp"
             app:fabSize="mini"

@@ -46,8 +46,11 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageView profileactivity_imageview_profileimage;
     private TextView profileactivity_textview_username;
     private TextView profileactivity_textview_usermessage;
-    private Button profileactivity_button_friendAdd;
-    private Button profileactivity_button_chatCreate;
+    private ImageView profileactivity_imageview_friend;
+    private ImageView profileactivity_imageview_chatCreate;
+    private TextView profileactivity_textview_friend;
+
+
     String serverUrl = new ServerURL().getUrl();
     UserInfo currentUser = CurrentUserInfo.getUser().getUserInfo();
     UserInfoUpdate userInfoUpdate = new UserInfoUpdate();
@@ -74,8 +77,10 @@ public class ProfileActivity extends AppCompatActivity {
         profileactivity_imageview_profileimage = findViewById(R.id.profileactivity_imageview_profileimage);
         profileactivity_textview_username = findViewById(R.id.profileactivity_textview_username);
         profileactivity_textview_usermessage =findViewById(R.id.profileactivity_textview_usermessage);
-        profileactivity_button_friendAdd = findViewById(R.id.profileactivity_button_friendAdd);
-        profileactivity_button_chatCreate = findViewById(R.id.profileactivity_button_chatCreate);
+        profileactivity_imageview_chatCreate = findViewById(R.id.profileactivity_imageview_chatCreate);
+        profileactivity_imageview_friend = findViewById(R.id.profileactivity_imageview_friend);
+        profileactivity_textview_friend = findViewById(R.id.profileactivity_textview_friend);
+
 
 
         profileactivity_imageview_profileimage.setImageBitmap(userinfo.getImage());
@@ -84,8 +89,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         if(SelectedUserInfo.getUser().getUserInfo().equals(CurrentUserInfo.getUser().getUserInfo())){
             isMe = true;
-            profileactivity_button_chatCreate.setText("프로필 수정");
-            profileactivity_button_friendAdd.setVisibility(View.GONE);
+            profileactivity_imageview_profileimage.setImageBitmap(CurrentUserInfo.getUser().getUserInfo().getImage());
+            profileactivity_imageview_friend.setImageResource(R.drawable.icon_account);
+            profileactivity_textview_friend.setText("내 정보");
         }
 
         for (int i=0; i<currentUser.getFriendsList().size();i++){
@@ -102,7 +108,7 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        profileactivity_button_chatCreate.setOnClickListener(new View.OnClickListener() {               //image눌러 화면이동
+        profileactivity_imageview_chatCreate.setOnClickListener(new View.OnClickListener() {               //image눌러 화면이동
             @Override
             public void onClick(View v) {
                 Intent intentToCatRoom = new Intent(ProfileActivity.this,ChatRoomActivity.class);
@@ -146,14 +152,16 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        if (isFriend)
-            profileactivity_button_friendAdd.setText("친구 삭제");
+        if (isFriend) {
+            profileactivity_imageview_friend.setImageResource(R.drawable.icon_user_delete);
+            profileactivity_textview_friend.setText("친구 삭제");
+        }
         else if(!isMe){
-            profileactivity_button_chatCreate.setVisibility(View.GONE);
-            profileactivity_button_friendAdd.setText("친구 추가");
+            profileactivity_imageview_friend.setImageResource(R.drawable.icon_user_plus);
+            profileactivity_textview_friend.setText("친구 추가");
         }
 
-        profileactivity_button_friendAdd.setOnClickListener(new View.OnClickListener() {
+        profileactivity_imageview_friend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String myId = CurrentUserInfo.getUser().getUserInfo().get_id();

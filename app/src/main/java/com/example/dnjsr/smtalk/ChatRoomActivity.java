@@ -180,6 +180,7 @@ public class ChatRoomActivity extends AppCompatActivity {
         Log.d("12321", SelectedRoomInfo.getSelectedRoomInfo().get_id());
 
         ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         String title = "그룹톡";
         if (SelectedRoomInfo.getSelectedRoomInfo().getUsersList().size() < 3)
@@ -205,6 +206,20 @@ public class ChatRoomActivity extends AppCompatActivity {
         GetAllChats getAllChats = new GetAllChats();
         getAllChats.getAllChats(SelectedRoomInfo.getSelectedRoomInfo().get_id(),mContext);
 
+
+    }
+
+    @Override
+
+    public boolean onSupportNavigateUp()
+
+    {
+
+        Log.d("클릭", "클릭됨");
+
+
+
+        return super.onSupportNavigateUp();
 
     }
 
@@ -244,11 +259,13 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     static class ChatRoomRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        List<ChatObject> items;
+        List<ChatObject> items = new ArrayList<>();
         boolean isMe;
 
         @Override
         public int getItemViewType(int position) {
+            UserInfo da = CurrentUserInfo.getUser().getUserInfo();
+
             if (items.get(position).getUser().get_id().equals(CurrentUserInfo.getUser().getUserInfo().get_id())) {
                 if (items.get(position).getBitmap() == null)
                     return 0;

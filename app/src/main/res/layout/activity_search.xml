@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorYellow">
+    android:orientation="vertical"
+    tools:context=".SearchActivity">
+    <!--android:background="@color/colorYellow"-->
     <LinearLayout
         android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
@@ -23,13 +23,16 @@
             android:id="@+id/searchActivity_edittext_search"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
-        <ImageView
+        <Button
+            android:background="@drawable/button_background"
+            android:textColor="#ffff"
+            android:fontFamily="@font/baeminfont"
+            android:text="찾기"
             android:layout_marginLeft="20dp"
-            android:src="@drawable/icon_search"
             android:layout_weight="1"
-            android:id="@+id/searchActivity_imageview_search"
-            android:layout_width="0dp"
-            android:layout_height="28dp" />
+            android:id="@+id/searchActivity_button_search"
+            android:layout_width="30dp"
+            android:layout_height="40dp" />
 
 
     </LinearLayout>

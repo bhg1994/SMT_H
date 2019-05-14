@@ -37,5 +37,6 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }
     implementation 'com.android.support:recyclerview-v7:27.1.0'
+    implementation 'de.hdodenhof:circleimageview:3.0.0'
 
 }

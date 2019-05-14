@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -45,11 +47,12 @@ public class SearchActivity extends AppCompatActivity {
     RecyclerView searchActivity_recyclerview;
     ArrayList<UserInfo> adapterList;
     SearchActivityRecyclerViewAdapter searchActivityRecyclerViewAdapter;
-    ImageView searchActivity_imageview_search;
+    Button searchActivity_button_search;
 
     String searchString = "";
     ArrayList<UserInfo> userInfos = new ArrayList<>();
     Bitmap bitmap;
+
 
     @SuppressLint("HandlerLeak")
     Handler handler = new Handler(){
@@ -70,8 +73,8 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
         searchActivity_edittext_search = findViewById(R.id.searchActivity_edittext_search);
         searchActivity_recyclerview = findViewById(R.id.searchActivity_recyclerview);
-        searchActivity_imageview_search = findViewById(R.id.searchActivity_imageview_search);
-        searchActivity_imageview_search.setOnClickListener(new View.OnClickListener() {
+        searchActivity_button_search = findViewById(R.id.searchActivity_button_search);
+        searchActivity_button_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 userInfos.clear();
@@ -84,6 +87,9 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         });
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("친구 추가");
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 

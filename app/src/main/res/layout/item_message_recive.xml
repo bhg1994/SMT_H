@@ -38,7 +38,7 @@
                 app:angle="8dp"
                 app:arrowWidth="8dp"
                 app:arrowHeight="10dp"
-                app:arrowPosition="1dp"
+                app:arrowPosition="6dp"
                 app:arrowLocation="left"
                 app:arrowCenter="false"
                 app:bubbleColor="@color/colorBackground"/>
