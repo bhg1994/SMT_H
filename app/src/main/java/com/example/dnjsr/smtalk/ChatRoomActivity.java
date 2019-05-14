@@ -79,6 +79,9 @@ public class ChatRoomActivity extends AppCompatActivity {
                     photoDownloadThread.ThreadStart(chatObject,chatObjectList,mContext);
                 }
                 else if (newChatObj.getType().equals("text")){
+                    String a2 = newChatObj.getUser();
+                    HashMap<String,UserInfo> a = AllRoomUser.getAllRoomUsers();
+                    String a1 = a.get(newChatObj.getUser()).getUserName();
                     chatObject = new ChatObject(newChatObj.getCreateAt(), newChatObj.getChat(), AllRoomUser.getAllRoomUsers().get(newChatObj.getUser()), SelectedRoomInfo.getSelectedRoomInfo(), 1);
                     chatObjectList.add(chatObject);
                     handler.sendEmptyMessage(0);
@@ -264,7 +267,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         @Override
         public int getItemViewType(int position) {
-            UserInfo da = CurrentUserInfo.getUser().getUserInfo();
+
 
             if (items.get(position).getUser().get_id().equals(CurrentUserInfo.getUser().getUserInfo().get_id())) {
                 if (items.get(position).getBitmap() == null)

@@ -146,6 +146,7 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                     RoomCreate roomCreate = new RoomCreate();
                     AllRoomUser.getAllRoomUsers().put(SelectedUserInfo.getUser().getUserInfo().get_id(),SelectedUserInfo.getUser().getUserInfo());
+                    AllRoomUser.getAllRoomUsers().put(CurrentUserInfo.getUser().getUserInfo().get_id(), CurrentUserInfo.getUser().getUserInfo());
                     roomCreate.createRoom(tool.getRoomIdBy_Id(SelectedUserInfo.getUser().getUserInfo().get_id()),CurrentUserInfo.getUser().getUserInfo().get_id(), SelectedUserInfo.getUser().getUserInfo().get_id(), intentToCatRoom, ProfileActivity.this);
 
                 }

@@ -27,14 +27,24 @@ public class GroupRoomCreate {
 
 
         try {
+            int i=0;
+            String[] a = new String[usersList.size()];
+            for (String b:usersList){
+                a[i]=b;
+                i++;
+            }
+            usersList.add(CurrentUserInfo.getUser().getUserInfo().get_id());
             HashMap<String, List<String>> input = new HashMap<>();
             input.put("usersList", usersList);
+            /*for (String user_Id:usersList) {
+                input.put("usersList",user_Id);
+            }*/
 
 
             Retrofit retrofit = new Retrofit.Builder().baseUrl(url)
                     .addConverterFactory(GsonConverterFactory.create()).build();
             RetrofitApi retrofitApi = retrofit.create(RetrofitApi.class);
-            retrofitApi.createGroupRoom(input).enqueue(new Callback<CreateRoomResult>() {
+            retrofitApi.createGroupRoom(usersList).enqueue(new Callback<CreateRoomResult>() {
                 @Override
                 public void onResponse(Call<CreateRoomResult> call, Response<CreateRoomResult> response) {
                     if (response.isSuccessful()) {
