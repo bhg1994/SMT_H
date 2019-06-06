@@ -95,6 +95,12 @@ public interface RetrofitApi {
     Call<ResultCode> sendPhoto(@Part("user") RequestBody user, @Part("room") RequestBody room, @Part MultipartBody.Part img);
 
 
+    //send video call
+    @FormUrlEncoded
+    @POST("/chat/call")
+    Call<ResultCode> sendVideoCall(@FieldMap HashMap<String,String> map);
+
+
 
 
 

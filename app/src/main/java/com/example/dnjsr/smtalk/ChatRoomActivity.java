@@ -37,6 +37,7 @@ import com.example.dnjsr.smtalk.info.UserInfo;
 import com.example.dnjsr.smtalk.userInfoUpdate.GetAllChats;
 import com.example.dnjsr.smtalk.userInfoUpdate.NewChatSend;
 import com.example.dnjsr.smtalk.userInfoUpdate.SendPhoto;
+import com.example.dnjsr.smtalk.userInfoUpdate.VideoCallSend;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -94,6 +95,23 @@ public class ChatRoomActivity extends AppCompatActivity {
         }
 
     };
+
+    Emitter.Listener emmiterVideoCall = new Emitter.Listener() {
+        ChatObject chatObject;
+
+        @Override
+        public void call(Object... args) {
+            try {
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    };
+
     Emitter.Listener emitterInit = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
@@ -144,6 +162,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         mContext = this;
 
+        FloatingActionButton btVideoCall = findViewById(R.id.chatroomactivity_floatingbutton_videoCall);
         FloatingActionButton btChat = findViewById(R.id.chatroomactivity_floatingbutton_send);
         FloatingActionButton btPhoto = findViewById(R.id.chatroomactivity_floatingbutton_photo);
         final EditText edtChat = findViewById(R.id.chatroomactivity_edittext_message);
@@ -173,7 +192,8 @@ public class ChatRoomActivity extends AppCompatActivity {
         }
         socket.connect();
 
-        socket.on(Socket.EVENT_CONNECT, emitterInit).on("newChat", emmiterNewChat);
+        socket.on(Socket.EVENT_CONNECT, emitterInit).on("newChat", emmiterNewChat).on("call",emmiterVideoCall);
+
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -205,6 +225,17 @@ public class ChatRoomActivity extends AppCompatActivity {
                 startActivityForResult(photoIntent, SELECT_PHOTO);
             }
         });
+
+        //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        btVideoCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                VideoCallSend videoCallSend = new VideoCallSend();
+                videoCallSend.newVideoCall(SelectedRoomInfo.getSelectedRoomInfo().get_id());
+            }
+        });
+
+
 
         GetAllChats getAllChats = new GetAllChats();
         getAllChats.getAllChats(SelectedRoomInfo.getSelectedRoomInfo().get_id(),mContext);

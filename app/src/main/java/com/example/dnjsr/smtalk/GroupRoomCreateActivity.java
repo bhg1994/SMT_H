@@ -2,6 +2,7 @@ package com.example.dnjsr.smtalk;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,9 +30,25 @@ public class GroupRoomCreateActivity extends AppCompatActivity {
     RecyclerView recyclerView;
 
     @Override
+
+    public boolean onSupportNavigateUp()     //actionbar 뒤로가기 이벤트
+
+    {
+
+        Log.d("클릭", "클릭됨");
+
+        return super.onSupportNavigateUp();
+
+    }
+
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_room_create);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("대화상대 초대");
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         userInfos = ((MainActivity)MainActivity.mContext).getUserInfos();
         recyclerView = findViewById(R.id.Rv_UserSelect);
@@ -128,5 +145,7 @@ public class GroupRoomCreateActivity extends AppCompatActivity {
                 checkBox = view.findViewById(R.id.checkbox);
             }
         }
+
+
     }
 }
